@@ -2,7 +2,35 @@ import pytest
 
 import random
 import string
-import pyloadover.pyloadover
+from typing import Callable
+from pyloadover.pyloadover import _manager
+from pyloadover.utils import get_namespace
+
+
+@pytest.fixture
+def foo() -> Callable:
+    def foo(a: int, b: str, c: bool = True):
+        return a, b, c
+
+    return foo
+
+
+@pytest.fixture
+def foo_namespace(foo) -> str:
+    return get_namespace(foo)
+
+
+@pytest.fixture
+def bar() -> Callable:
+    def bar(*args, **kwargs):
+        return args, kwargs
+
+    return bar
+
+
+@pytest.fixture
+def bar_namespace(bar) -> Callable:
+    return get_namespace(bar)
 
 
 @pytest.fixture
@@ -18,4 +46,4 @@ def kwargs(args) -> dict:
 
 @pytest.fixture
 def reset_manager():
-    pyloadover.pyloadover._manager = pyloadover.pyloadover.FunctionManager()
+    _manager.reset()

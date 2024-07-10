@@ -1,64 +1,42 @@
-from unittest.mock import patch, MagicMock
-
-from pyloadover.pyloadover import loadover
-
-
-@patch('pyloadover.pyloadover.Function', autospec=True)
-@patch('pyloadover.pyloadover._manager', autospec=True)
-def test_loadover_flow(mock_manager: MagicMock, MockFunction: MagicMock, args, kwargs):
-    def bar(*a, **b):
-        return a, b
-
-    original_bar = bar
-    decorated_bar = loadover(bar)
-
-    MockFunction.assert_called_once_with(original_bar)
-    mock_manager.add.assert_called_once_with(MockFunction.return_value)
-
-    return_value = decorated_bar(*args, **kwargs)
-
-    mock_manager.find.assert_called_once_with("bar", *args, **kwargs)
-    mock_function = mock_manager.find.return_value
-    mock_function.assert_called_once_with(*args, **kwargs)
-    assert mock_function.return_value == return_value
+from pyloadover.pyloadover import pyloadover, loadover
 
 
 def test_loadover_on_func(reset_manager):
     @loadover
     def foo(x: int):
-        return "one param"
+        return x
 
     @loadover
     def foo(x: int, y: str):
-        return "two param"
+        return x, y
 
     @loadover
     def bar(x: int):
-        return "unique"
+        return x
 
-    assert foo(1) == "one param"
-    assert foo(1, "2") == "two param"
-    assert bar(1) == "unique"
+    assert foo(1) == 1
+    assert foo(1, "2") == (1, "2")
+    assert bar(3) == 3
 
 
 def test_loadoer_on_method(reset_manager):
     class Foo:
         @loadover
         def foo(self, x: int):
-            return "one param"
+            return x
 
         @loadover
         def foo(self, x: int, y: str):
-            return "two param"
+            return x, y
 
         @loadover
         def bar(self, x: int):
-            return "unique"
+            return x
 
     instance = Foo()
-    assert instance.foo(1) == "one param"
-    assert instance.foo(1, "2") == "two param"
-    assert instance.bar(1) == "unique"
+    assert instance.foo(1) == 1
+    assert instance.foo(1, "2") == (1, "2")
+    assert instance.bar(3) == 3
 
 
 def test_loadover_on_static_method(reset_manager):
@@ -66,21 +44,21 @@ def test_loadover_on_static_method(reset_manager):
         @staticmethod
         @loadover
         def foo(x: int):
-            return "one param"
+            return x
 
         @staticmethod
         @loadover
         def foo(x: int, y: str):
-            return "two param"
+            return x, y
 
         @staticmethod
         @loadover
         def bar(x: int):
-            return "unique"
+            return x
 
-    assert Foo.foo(1) == "one param"
-    assert Foo.foo(1, "2") == "two param"
-    assert Foo.bar(1) == "unique"
+    assert Foo.foo(1) == 1
+    assert Foo.foo(1, "2") == (1, "2")
+    assert Foo.bar(3) == 3
 
 
 def test_loadover_on_class_method(reset_manager):
@@ -88,18 +66,31 @@ def test_loadover_on_class_method(reset_manager):
         @classmethod
         @loadover
         def foo(cls, x: int):
-            return "one param"
+            return x
 
         @classmethod
         @loadover
         def foo(cls, x: int, y: str):
-            return "two param"
+            return x, y
 
         @classmethod
         @loadover
         def bar(cls, x: int):
-            return "unique"
+            return x
 
-    assert Foo.foo(1) == "one param"
-    assert Foo.foo(1, "2") == "two param"
-    assert Foo.bar(1) == "unique"
+    assert Foo.foo(1) == 1
+    assert Foo.foo(1, "2") == (1, "2")
+    assert Foo.bar(3) == 3
+
+
+def test_pyloadover_group(reset_manager):
+    @pyloadover("group")
+    def foo(x: int):
+        return x
+
+    @pyloadover("group")
+    def bar(x: int, y: str):
+        return x, y
+
+    assert foo(1, "2") == (1, "2")
+    assert bar(1) == 1

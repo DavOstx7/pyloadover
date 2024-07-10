@@ -1,24 +1,32 @@
 from typing import List
 from pyloadover.function import Function
 from pyloadover.exceptions import (
-    NameMismatchError, SignatureExistsError, NoMatchingSignatureError, MultipleMatchingSignaturesError
+    NamespaceMismatchError, SignatureExistsError, NoMatchingSignatureError, MultipleMatchingSignaturesError
 )
 
 
 class FunctionRegistry:
-    def __init__(self, name: str):
-        self._name = name
+    def __init__(self, namespace: str, should_namespace_match: bool):
+        self._namespace = namespace
+        self._should_namespace_match = should_namespace_match
         self._functions: List[Function] = []
 
     @property
-    def name(self) -> str:
-        return self._name
+    def namespace(self) -> str:
+        return self._namespace
+
+    @property
+    def should_namespace_match(self) -> bool:
+        return self._should_namespace_match
 
     def register(self, function: Function):
-        if function.name != self.name:
-            raise NameMismatchError(f"Function name '{function.name}' does not match registry name '{self.name}'")
+        if self._should_namespace_match and function.namespace != self.namespace:
+            raise NamespaceMismatchError(f"Function '{function.namespace}' does not match registry '{self.namespace}'")
+
         if self.is_signature_exists(function):
-            raise SignatureExistsError(f"Function signature {function.signature} already exists in the registry")
+            raise SignatureExistsError(
+                f"Function signature {function.signature} already exists in registry '{self.namespace}'"
+            )
 
         self._functions.append(function)
 
@@ -26,10 +34,12 @@ class FunctionRegistry:
         matches = self.find_by_arguments(*args, **kwargs)
 
         if len(matches) == 0:
-            raise NoMatchingSignatureError(f"Provided arguments do not match any signature in registry '{self.name}'")
+            raise NoMatchingSignatureError(
+                f"Provided arguments do not match any signature in registry '{self.namespace}'"
+            )
         elif len(matches) > 1:
             raise MultipleMatchingSignaturesError(
-                f"Provided arguments match multiple signatures in registry '{self.name}'"
+                f"Provided arguments match multiple signatures in registry '{self.namespace}'"
             )
         return matches[0]
 

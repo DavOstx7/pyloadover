@@ -1,6 +1,6 @@
 import inspect
 from typing import Callable
-from pyloadover.utils import is_instance
+from pyloadover.utils import get_namespace, is_instance
 
 
 class Function:
@@ -9,8 +9,16 @@ class Function:
         self._sig = inspect.signature(function)
 
     @property
+    def namespace(self) -> str:
+        return get_namespace(self._obj)
+
+    @property
     def name(self) -> str:
         return self._obj.__name__
+
+    @property
+    def module(self) -> str:
+        return self._obj.__module__
 
     @property
     def signature(self) -> inspect.Signature:

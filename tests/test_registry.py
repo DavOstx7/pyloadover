@@ -2,54 +2,56 @@ import pytest
 
 from pyloadover.registry import FunctionRegistry, Function
 from pyloadover.exceptions import (
-    NameMismatchError, SignatureExistsError, NoMatchingSignatureError, MultipleMatchingSignaturesError
+    NamespaceMismatchError, SignatureExistsError, NoMatchingSignatureError, MultipleMatchingSignaturesError
 )
 
 
-def _foo(a: int, b: str, c: bool = True):
-    pass
+def test_register(foo, foo_namespace):
+    registry = FunctionRegistry(foo_namespace, True)
+
+    registry.register(Function(foo))
 
 
-def test_register():
-    registry = FunctionRegistry("_foo")
+def test_register_name_mismatch(foo, foo_namespace, bar_namespace):
+    registry = FunctionRegistry(bar_namespace, True)
 
-    registry.register(Function(_foo))
-
-
-def test_register_name_mismatch():
-    registry = FunctionRegistry("bar")
-
-    with pytest.raises(NameMismatchError):
-        registry.register(Function(_foo))
+    with pytest.raises(NamespaceMismatchError):
+        registry.register(Function(foo))
 
 
-def test_register_signature_already_exists():
-    registry = FunctionRegistry("_foo")
-    registry.register(Function(_foo))
+def test_register_no_name_mismatch(foo, foo_namespace, bar_namespace):
+    registry = FunctionRegistry(bar_namespace, False)
+
+    registry.register(Function(foo))
+
+
+def test_register_signature_already_exists(foo, foo_namespace):
+    registry = FunctionRegistry(foo_namespace, True)
+    registry.register(Function(foo))
 
     with pytest.raises(SignatureExistsError):
-        registry.register(Function(_foo))
+        registry.register(Function(foo))
 
 
 def test_find_by_arguments():
-    registry = FunctionRegistry("bar")
+    registry = FunctionRegistry("", False)
 
-    def bar():
+    def foo():
         pass
 
-    function1 = Function(bar)
+    function1 = Function(foo)
     registry.register(function1)
 
-    def bar(a: bool):
+    def foo(a: bool):
         pass
 
-    function2 = Function(bar)
+    function2 = Function(foo)
     registry.register(function2)
 
-    def bar(a: int, b: str, c: bool = True):
+    def foo(a: int, b: str, c: bool = True):
         pass
 
-    function3 = Function(bar)
+    function3 = Function(foo)
     registry.register(function3)
 
     assert registry.find_by_arguments() == [function1]
@@ -59,24 +61,24 @@ def test_find_by_arguments():
 
 
 def test_find_one_by_arguments():
-    registry = FunctionRegistry("bar")
+    registry = FunctionRegistry("", False)
 
-    def bar():
+    def foo():
         pass
 
-    function1 = Function(bar)
+    function1 = Function(foo)
     registry.register(function1)
 
-    def bar(a: bool):
+    def foo(a: bool):
         pass
 
-    function2 = Function(bar)
+    function2 = Function(foo)
     registry.register(function2)
 
-    def bar(a: int, b: str, c: bool = True):
+    def foo(a: int, b: str, c: bool = True):
         pass
 
-    function3 = Function(bar)
+    function3 = Function(foo)
     registry.register(function3)
 
     assert registry.find_one_by_arguments() == function1
@@ -84,26 +86,26 @@ def test_find_one_by_arguments():
     assert registry.find_one_by_arguments(1, "2", True) == function3
 
 
-def test_find_one_by_arguments_no_matches():
-    registry = FunctionRegistry("_foo")
-    registry.register(Function(_foo))
+def test_find_one_by_arguments_no_matches(foo):
+    registry = FunctionRegistry(foo, False)
+    registry.register(Function(foo))
 
     with pytest.raises(NoMatchingSignatureError):
         registry.find_one_by_arguments()
 
 
 def test_find_one_by_arguments_multiple_matches():
-    registry = FunctionRegistry("bar")
+    registry = FunctionRegistry("", False)
 
-    def bar():
+    def foo():
         pass
 
-    registry.register(Function(bar))
+    registry.register(Function(foo))
 
-    def bar(*a, **b):
+    def foo(*a, **b):
         pass
 
-    registry.register(Function(bar))
+    registry.register(Function(foo))
 
     with pytest.raises(MultipleMatchingSignaturesError):
         registry.find_one_by_arguments()
