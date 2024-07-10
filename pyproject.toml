@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "pyloadover"
+version = "0.1.0"
+description = "Overloading Utilities"
+authors = ["dav ost <davidost2003@gmail.com>"]
+license = "LICENSE"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.6"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^6.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
