@@ -1,13 +1,14 @@
 [tool.poetry]
 name = "pyloadover"
-version = "0.1.0"
+version = "0.1.1"
 description = "Overloading Utilities"
 authors = ["dav ost <davidost2003@gmail.com>"]
 license = "LICENSE"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.6"
+python = "^3.8"
+typeguard = "^4.3.0"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^6.0.0"
