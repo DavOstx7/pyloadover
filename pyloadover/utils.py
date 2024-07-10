@@ -1,4 +1,5 @@
 import typeguard
+from typing import Callable
 
 
 def is_instance(value, annotation) -> bool:
@@ -8,3 +9,7 @@ def is_instance(value, annotation) -> bool:
         return False
     else:
         return True
+
+
+def get_namespace(function: Callable) -> str:
+    return f"{function.__module__}.{function.__name__}"
