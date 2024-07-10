@@ -14,9 +14,9 @@ class MultipleMatchingSignaturesError(SignatureError):
     pass
 
 
-class NameMismatchError(NameError):
+class NamespaceMismatchError(NameError):
     pass
 
 
-class NameNotFoundError(NameError):
+class NamespaceNotFoundError(NameError):
     pass

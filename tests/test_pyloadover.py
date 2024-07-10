@@ -1,6 +1,7 @@
 from unittest.mock import patch, MagicMock
 
 from pyloadover.pyloadover import loadover
+from pyloadover.utils import get_namespace
 
 
 @patch('pyloadover.pyloadover.Function', autospec=True)
@@ -17,7 +18,7 @@ def test_loadover_flow(mock_manager: MagicMock, MockFunction: MagicMock, args, k
 
     return_value = decorated_bar(*args, **kwargs)
 
-    mock_manager.find.assert_called_once_with("bar", *args, **kwargs)
+    mock_manager.find.assert_called_once_with(MockFunction.return_value.namespace, *args, **kwargs)
     mock_function = mock_manager.find.return_value
     mock_function.assert_called_once_with(*args, **kwargs)
     assert mock_function.return_value == return_value

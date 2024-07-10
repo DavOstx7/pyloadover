@@ -6,12 +6,12 @@ _manager = FunctionManager()
 
 
 def loadover(f: Callable):
-    name = f.__name__
-    _manager.add(Function(f))
+    function = Function(f)
+    namespace = function.namespace
+    _manager.add(function)
 
     @functools.wraps(f)
     def wrapper(*args, **kwargs):
-        function = _manager.find(name, *args, **kwargs)
-        return function(*args, **kwargs)
+        return _manager.find(namespace, *args, **kwargs)(*args, **kwargs)
 
     return wrapper
