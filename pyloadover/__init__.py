@@ -1,5 +1,6 @@
 from typing import Callable
 from .pyloadover import pyloadover, loadover
+from .config import set_use_full_path_as_namespace
 
 
 class _DynamicPyloadover:
