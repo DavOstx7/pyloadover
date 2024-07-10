@@ -7,6 +7,9 @@ class FunctionManager:
     def __init__(self):
         self._registry_by_namespace: Dict[str, FunctionRegistry] = {}
 
+    def reset(self):
+        self._registry_by_namespace = {}
+
     def add(self, function: Function):
         namespace = function.namespace
         if namespace not in self._registry_by_namespace:
