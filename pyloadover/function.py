@@ -1,5 +1,6 @@
 import inspect
 from typing import Callable
+from pyloadover.utils import is_instance
 
 
 class Function:
@@ -24,12 +25,20 @@ class Function:
                 param = self._sig.parameters[name]
 
                 if param.annotation != inspect.Parameter.empty:
-                    if not isinstance(value, param.annotation):
+                    if not is_instance(value, param.annotation):
                         return False
 
             return True
         except (TypeError, ValueError):
             return False
+
+    @staticmethod
+    def _is_instance(value, annotation) -> bool:
+        try:
+            check_type(value, annotation)
+        except typeguard.TypeCheckError:
+            return False
+        return True
 
     def __call__(self, *args, **kwargs):
         return self._obj(*args, **kwargs)
