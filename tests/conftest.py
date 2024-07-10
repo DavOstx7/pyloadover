@@ -2,8 +2,8 @@ import pytest
 
 import random
 import string
-import pyloadover.pyloadover
 from typing import Callable
+from pyloadover.pyloadover import _manager
 from pyloadover.utils import get_namespace
 
 
@@ -46,4 +46,4 @@ def kwargs(args) -> dict:
 
 @pytest.fixture
 def reset_manager():
-    pyloadover.pyloadover._manager.reset()
+    _manager.reset()
