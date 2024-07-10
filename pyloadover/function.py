@@ -1,5 +1,6 @@
 import inspect
 from typing import Callable
+from pyloadover import config
 from pyloadover.utils import get_namespace, is_instance
 
 
@@ -10,7 +11,10 @@ class Function:
 
     @property
     def namespace(self) -> str:
-        return get_namespace(self._obj)
+        if config.is_use_full_path_as_namespace():
+            return get_namespace(self._obj)
+        else:
+            return self.name
 
     @property
     def name(self) -> str:
