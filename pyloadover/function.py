@@ -32,13 +32,5 @@ class Function:
         except (TypeError, ValueError):
             return False
 
-    @staticmethod
-    def _is_instance(value, annotation) -> bool:
-        try:
-            check_type(value, annotation)
-        except typeguard.TypeCheckError:
-            return False
-        return True
-
     def __call__(self, *args, **kwargs):
         return self._obj(*args, **kwargs)
