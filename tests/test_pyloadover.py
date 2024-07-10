@@ -1,23 +1,4 @@
-from unittest.mock import patch, MagicMock
-
-from pyloadover.pyloadover import loadover
-
-
-@patch('pyloadover.pyloadover.Function', autospec=True)
-@patch('pyloadover.pyloadover._manager', autospec=True)
-def test_loadover_flow(mock_manager: MagicMock, MockFunction: MagicMock, args, kwargs, bar):
-
-    new_bar = loadover(bar)
-
-    MockFunction.assert_called_once_with(bar)
-    mock_manager.add.assert_called_once_with(MockFunction.return_value)
-
-    return_value = new_bar(*args, **kwargs)
-
-    mock_manager.find.assert_called_once_with(MockFunction.return_value.namespace, *args, **kwargs)
-    mock_function = mock_manager.find.return_value
-    mock_function.assert_called_once_with(*args, **kwargs)
-    assert mock_function.return_value == return_value
+from pyloadover.pyloadover import pyloadover, loadover
 
 
 def test_loadover_on_func(reset_manager):
@@ -100,3 +81,16 @@ def test_loadover_on_class_method(reset_manager):
     assert Foo.foo(1) == 1
     assert Foo.foo(1, "2") == (1, "2")
     assert Foo.bar(3) == 3
+
+
+def test_pyloadover_group(reset_manager):
+    @pyloadover("group")
+    def foo(x: int):
+        return x
+
+    @pyloadover("group")
+    def bar(x: int, y: str):
+        return x, y
+
+    assert foo(1, "2") == (1, "2")
+    assert bar(1) == 1
