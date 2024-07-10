@@ -1,17 +1,27 @@
 import functools
 from typing import Callable
-from pyloadover.manager import FunctionManager, Function
+from pyloadover.manager import FunctionManager, AddOptions, Function
 
 _manager = FunctionManager()
 
 
-def loadover(f: Callable):
-    function = Function(f)
-    namespace = function.namespace
-    _manager.add(function)
+def pyloadover(group: str = None):
+    def decorator(f: Callable):
+        function = Function(f)
+        if group is None:
+            options = AddOptions(namespace=function.namespace, should_namespace_match=True)
+        else:
+            options = AddOptions(namespace=group, should_namespace_match=False)
 
-    @functools.wraps(f)
-    def wrapper(*args, **kwargs):
-        return _manager.find(namespace, *args, **kwargs)(*args, **kwargs)
+        _manager.add(function, options)
 
-    return wrapper
+        @functools.wraps(f)
+        def wrapper(*args, **kwargs):
+            return _manager.find(options.namespace, *args, **kwargs)(*args, **kwargs)
+
+        return wrapper
+
+    return decorator
+
+
+loadover = pyloadover()

@@ -6,17 +6,23 @@ from pyloadover.exceptions import (
 
 
 class FunctionRegistry:
-    def __init__(self, namespace: str):
+    def __init__(self, namespace: str, should_namespace_match: bool):
         self._namespace = namespace
+        self._should_namespace_match = should_namespace_match
         self._functions: List[Function] = []
 
     @property
     def namespace(self) -> str:
         return self._namespace
 
+    @property
+    def should_namespace_match(self) -> bool:
+        return self._should_namespace_match
+
     def register(self, function: Function):
-        if function.namespace != self.namespace:
+        if self._should_namespace_match and function.namespace != self.namespace:
             raise NamespaceMismatchError(f"Function '{function.namespace}' does not match registry '{self.namespace}'")
+
         if self.is_signature_exists(function):
             raise SignatureExistsError(
                 f"Function signature {function.signature} already exists in registry '{self.namespace}'"
