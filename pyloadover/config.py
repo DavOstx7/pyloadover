@@ -1,11 +1,15 @@
-CONFIG = {
-    "use_full_path_as_namespace": True
+from typing import Optional, Any
+
+config = {
+    "use_fully_qualified_function_id": True
 }
 
 
-def is_use_full_path_as_namespace() -> bool:
-    return CONFIG["use_full_path_as_namespace"]
+def _set_key_if_value_exists(key: str, value: Optional[Any]):
+    if value is None:
+        return
+    config[key] = value
 
 
-def set_use_full_path_as_namespace(use_full_path_namespace: bool):
-    CONFIG["use_full_path_as_namespace"] = use_full_path_namespace
+def basic_config(use_fully_qualified_function_id: bool = None):
+    _set_key_if_value_exists("use_fully_qualified_function_id", use_fully_qualified_function_id)
