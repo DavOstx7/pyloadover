@@ -1,53 +1,62 @@
+import inspect
 from typing import List
 from pyloadover.function import Function
 from pyloadover.exceptions import (
-    NamespaceMismatchError, SignatureExistsError, NoMatchingSignatureError, MultipleMatchingSignaturesError
+    MismatchedIdError, DuplicatedSignatureError, NoMatchFoundError, MultipleMatchesFoundError
 )
 
 
-class FunctionRegistry:
-    def __init__(self, namespace: str, should_namespace_match: bool):
-        self._namespace = namespace
-        self._should_namespace_match = should_namespace_match
+class Group:
+    def __init__(self, _id: str, allow_mismatched_ids: bool = False, allow_duplicated_signatures: bool = False):
+        self._id = _id
         self._functions: List[Function] = []
+        self.allow_mismatched_names = allow_mismatched_ids
+        self.allow_duplicated_signatures = allow_duplicated_signatures
 
     @property
-    def namespace(self) -> str:
-        return self._namespace
+    def id(self) -> str:
+        return self._id
 
     @property
-    def should_namespace_match(self) -> bool:
-        return self._should_namespace_match
+    def functions(self) -> List[Function]:
+        # Shallow Copy
+        return self._functions.copy()
+
+    def clear(self):
+        self._functions.clear()
 
     def register(self, function: Function):
-        if self._should_namespace_match and function.namespace != self.namespace:
-            raise NamespaceMismatchError(f"Function '{function.namespace}' does not match registry '{self.namespace}'")
+        if not self.allow_mismatched_names and function.id != self.id:
+            raise MismatchedIdError(
+                f"Function '{function.id}' does not match group '{self.id}'"
+            )
 
-        if self.is_signature_exists(function):
-            raise SignatureExistsError(
-                f"Function signature {function.signature} already exists in registry '{self.namespace}'"
+        if not self.allow_duplicated_signatures and self.is_signature_exists(function.signature):
+            raise DuplicatedSignatureError(
+                f"Function signature {function.signature} already exists in group '{self.id}'"
             )
 
         self._functions.append(function)
+
+    def find_by_arguments(self, *args, **kwargs) -> List[Function]:
+        return [function for function in self._functions if function.do_arguments_match(*args, **kwargs)]
 
     def find_one_by_arguments(self, *args, **kwargs) -> Function:
         matches = self.find_by_arguments(*args, **kwargs)
 
         if len(matches) == 0:
-            raise NoMatchingSignatureError(
-                f"Provided arguments do not match any signature in registry '{self.namespace}'"
+            raise NoMatchFoundError(
+                f"Provided arguments do not match any signature in group '{self.id}'"
             )
         elif len(matches) > 1:
-            raise MultipleMatchingSignaturesError(
-                f"Provided arguments match multiple signatures in registry '{self.namespace}'"
+            raise MultipleMatchesFoundError(
+                f"Provided arguments match multiple signatures in group '{self.id}'"
             )
+
         return matches[0]
 
-    def find_by_arguments(self, *args, **kwargs) -> List[Function]:
-        return [f for f in self._functions if f.do_arguments_match_signature(*args, **kwargs)]
-
-    def is_signature_exists(self, function: Function) -> bool:
-        for f in self._functions:
-            if f.signature == function.signature:
+    def is_signature_exists(self, signature: inspect.Signature) -> bool:
+        for function in self._functions:
+            if function.signature == signature:
                 return True
         return False
