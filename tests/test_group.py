@@ -1,40 +1,40 @@
 import pytest
 
-from pyloadover.registry import FunctionRegistry, Function
+from pyloadover.group import Group, Function
 from pyloadover.exceptions import (
-    NamespaceMismatchError, SignatureExistsError, NoMatchingSignatureError, MultipleMatchingSignaturesError
+    NameMismatchError, IdenticalSignatureError, NoMatchesFoundError, MultipleMatchesFoundError
 )
 
 
 def test_register(foo, foo_namespace):
-    registry = FunctionRegistry(foo_namespace, True)
+    registry = Group(foo_namespace, True)
 
     registry.register(Function(foo))
 
 
 def test_register_name_mismatch(foo, foo_namespace, bar_namespace):
-    registry = FunctionRegistry(bar_namespace, True)
+    registry = Group(bar_namespace, True)
 
-    with pytest.raises(NamespaceMismatchError):
+    with pytest.raises(NameMismatchError):
         registry.register(Function(foo))
 
 
 def test_register_no_name_mismatch(foo, foo_namespace, bar_namespace):
-    registry = FunctionRegistry(bar_namespace, False)
+    registry = Group(bar_namespace, False)
 
     registry.register(Function(foo))
 
 
 def test_register_signature_already_exists(foo, foo_namespace):
-    registry = FunctionRegistry(foo_namespace, True)
+    registry = Group(foo_namespace, True)
     registry.register(Function(foo))
 
-    with pytest.raises(SignatureExistsError):
+    with pytest.raises(IdenticalSignatureError):
         registry.register(Function(foo))
 
 
 def test_find_by_arguments():
-    registry = FunctionRegistry("", False)
+    registry = Group("", False)
 
     def foo():
         pass
@@ -61,7 +61,7 @@ def test_find_by_arguments():
 
 
 def test_find_one_by_arguments():
-    registry = FunctionRegistry("", False)
+    registry = Group("", False)
 
     def foo():
         pass
@@ -87,15 +87,15 @@ def test_find_one_by_arguments():
 
 
 def test_find_one_by_arguments_no_matches(foo):
-    registry = FunctionRegistry(foo, False)
+    registry = Group(foo, False)
     registry.register(Function(foo))
 
-    with pytest.raises(NoMatchingSignatureError):
+    with pytest.raises(NoMatchesFoundError):
         registry.find_one_by_arguments()
 
 
 def test_find_one_by_arguments_multiple_matches():
-    registry = FunctionRegistry("", False)
+    registry = Group("", False)
 
     def foo():
         pass
@@ -107,5 +107,5 @@ def test_find_one_by_arguments_multiple_matches():
 
     registry.register(Function(foo))
 
-    with pytest.raises(MultipleMatchingSignaturesError):
+    with pytest.raises(MultipleMatchesFoundError):
         registry.find_one_by_arguments()
