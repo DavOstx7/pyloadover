@@ -1,9 +1,9 @@
 from typing import Callable
 from .pyloadover import pyloadover, loadover
-from .config import set_use_full_path_as_namespace
+from .config import basic_config
 
 
-class _DynamicPyloadover:
+class _DynamicGroupLoader:
     def __init__(self, name):
         self.name = name
 
@@ -16,4 +16,4 @@ class _DynamicPyloadover:
 
 
 def __getattr__(group: str):
-    return _DynamicPyloadover(group)
+    return _DynamicGroupLoader(group)

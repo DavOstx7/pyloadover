@@ -9,7 +9,7 @@ from pyloadover.function import Function
     ((1, "2"), {})
 ])
 def test_arguments_match_signature(args, kwargs, foo):
-    assert Function(foo).do_arguments_match_signature(*args, **kwargs)
+    assert Function(foo).do_arguments_match(*args, **kwargs)
 
 
 @pytest.mark.parametrize("args,  kwargs", [
@@ -20,12 +20,12 @@ def test_arguments_match_signature(args, kwargs, foo):
     ((1, "2"), {"c": True, "d": False}),
 ])
 def test_arguments_not_match_signature(args, kwargs, foo):
-    assert not Function(foo).do_arguments_match_signature(*args, **kwargs)
+    assert not Function(foo).do_arguments_match(*args, **kwargs)
 
 
-@patch('pyloadover.function.get_namespace', autospec=True)
-def test_function_namespace_property(mock_get_namespace: MagicMock, foo):
-    return_value = Function(foo).namespace
+def test_fully_qualified_name_property(foo):
+    assert Function(foo).id == "conftest.foo.<locals>.foo"
 
-    mock_get_namespace.assert_called_once_with(foo)
-    assert return_value == mock_get_namespace.return_value
+
+def test_not_fully_qualified_name_property(foo, use_simple_function_id):
+    assert Function(foo).id == "foo"

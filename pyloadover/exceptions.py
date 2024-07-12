@@ -1,22 +1,22 @@
-class SignatureError(Exception):
+class DuplicatedSignatureError(Exception):
     pass
 
 
-class SignatureExistsError(SignatureError):
+class MatchError(Exception):
     pass
 
 
-class NoMatchingSignatureError(SignatureError):
+class NoMatchFoundError(MatchError):
     pass
 
 
-class MultipleMatchingSignaturesError(SignatureError):
+class MultipleMatchesFoundError(MatchError):
     pass
 
 
-class NamespaceMismatchError(NameError):
+class MismatchedIdError(Exception):
     pass
 
 
-class NamespaceNotFoundError(NameError):
+class GroupNotFoundError(Exception):
     pass
