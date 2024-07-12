@@ -4,7 +4,12 @@ import random
 import string
 from typing import Callable
 from pyloadover.pyloadover import _manager
-from pyloadover.utils import get_namespace
+from pyloadover.config import basic_config
+
+
+@pytest.fixture
+def use_simple_function_id():
+    basic_config(use_fully_qualified_function_id=False)
 
 
 @pytest.fixture
@@ -16,21 +21,8 @@ def foo() -> Callable:
 
 
 @pytest.fixture
-def foo_namespace(foo) -> str:
-    return get_namespace(foo)
-
-
-@pytest.fixture
-def bar() -> Callable:
-    def bar(*args, **kwargs):
-        return args, kwargs
-
-    return bar
-
-
-@pytest.fixture
-def bar_namespace(bar) -> Callable:
-    return get_namespace(bar)
+def random_string() -> tuple:
+    return ''.join(random.choices(string.printable, k=random.randint(1, 5)))
 
 
 @pytest.fixture
@@ -45,5 +37,5 @@ def kwargs(args) -> dict:
 
 
 @pytest.fixture
-def reset_manager():
-    _manager.reset()
+def clear_manager():
+    _manager.clear()

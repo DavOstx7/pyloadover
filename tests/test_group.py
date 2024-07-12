@@ -2,39 +2,40 @@ import pytest
 
 from pyloadover.group import Group, Function
 from pyloadover.exceptions import (
-    NameMismatchError, IdenticalSignatureError, NoMatchesFoundError, MultipleMatchesFoundError
+    MismatchedIdError, DuplicatedSignatureError, NoMatchFoundError, MultipleMatchesFoundError
 )
 
 
-def test_register(foo, foo_namespace):
-    registry = Group(foo_namespace, True)
+def test_allow_mismatched_names(foo, use_simple_function_id):
+    group = Group("bar", allow_mismatched_ids=True)
 
-    registry.register(Function(foo))
-
-
-def test_register_name_mismatch(foo, foo_namespace, bar_namespace):
-    registry = Group(bar_namespace, True)
-
-    with pytest.raises(NameMismatchError):
-        registry.register(Function(foo))
+    group.register(Function(foo))
 
 
-def test_register_no_name_mismatch(foo, foo_namespace, bar_namespace):
-    registry = Group(bar_namespace, False)
+def test_not_allow_mismatched_names(foo, use_simple_function_id):
+    group = Group("bar", allow_mismatched_ids=False)
 
-    registry.register(Function(foo))
-
-
-def test_register_signature_already_exists(foo, foo_namespace):
-    registry = Group(foo_namespace, True)
-    registry.register(Function(foo))
-
-    with pytest.raises(IdenticalSignatureError):
-        registry.register(Function(foo))
+    with pytest.raises(MismatchedIdError):
+        group.register(Function(foo))
 
 
-def test_find_by_arguments():
-    registry = Group("", False)
+def test_allow_identical_signatures(foo, use_simple_function_id):
+    group = Group("foo", allow_duplicated_signatures=True)
+
+    group.register(Function(foo))
+    group.register(Function(foo))
+
+
+def test_not_allow_identical_signatures(foo, use_simple_function_id):
+    group = Group("foo", allow_duplicated_signatures=False)
+
+    group.register(Function(foo))
+    with pytest.raises(DuplicatedSignatureError):
+        group.register(Function(foo))
+
+
+def test_find_by_arguments(use_simple_function_id):
+    registry = Group("foo")
 
     def foo():
         pass
@@ -60,8 +61,8 @@ def test_find_by_arguments():
     assert registry.find_by_arguments(False, False, False) == []
 
 
-def test_find_one_by_arguments():
-    registry = Group("", False)
+def test_find_one_by_arguments(use_simple_function_id):
+    registry = Group("foo")
 
     def foo():
         pass
@@ -87,15 +88,15 @@ def test_find_one_by_arguments():
 
 
 def test_find_one_by_arguments_no_matches(foo):
-    registry = Group(foo, False)
+    registry = Group("foo")
     registry.register(Function(foo))
 
-    with pytest.raises(NoMatchesFoundError):
+    with pytest.raises(NoMatchFoundError):
         registry.find_one_by_arguments()
 
 
 def test_find_one_by_arguments_multiple_matches():
-    registry = Group("", False)
+    registry = Group("foo")
 
     def foo():
         pass

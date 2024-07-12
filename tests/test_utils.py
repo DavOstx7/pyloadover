@@ -1,11 +1,7 @@
 import pytest
 
 from typing import List, Dict
-from pyloadover.utils import is_instance, get_namespace
-
-
-def _foo(a: int, b: str, c: bool = True):
-    pass
+from pyloadover.utils import is_instance
 
 
 @pytest.mark.parametrize("value, annotation", [
@@ -31,6 +27,3 @@ def test_is_instance(value, annotation):
 def test_is_not_instance(value, annotation):
     assert not is_instance(value, annotation)
 
-
-def test_get_namespace():
-    assert get_namespace(_foo) == "test_utils._foo"
