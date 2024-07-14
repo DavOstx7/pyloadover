@@ -2,32 +2,25 @@ import pytest
 
 import random
 import string
-from typing import Callable
-from pyloadover.pyloadover import _manager
-from pyloadover.config import basic_config
+from pyloadover.pyloadover import manager, basic_config
+from pyloadover.functions import NameIdGenerator
+
+basic_config(function_id_generator=NameIdGenerator(), group_validators=[])
 
 
 @pytest.fixture
-def use_simple_function_id():
-    basic_config(use_fully_qualified_function_id=False)
+def random_int() -> int:
+    return random.randint(1, 7)
 
 
 @pytest.fixture
-def foo() -> Callable:
-    def foo(a: int, b: str, c: bool = True):
-        return a, b, c
-
-    return foo
+def random_string(random_int) -> tuple:
+    return ''.join(random.choices(string.printable, k=random_int))
 
 
 @pytest.fixture
-def random_string() -> tuple:
-    return ''.join(random.choices(string.printable, k=random.randint(1, 5)))
-
-
-@pytest.fixture
-def args() -> tuple:
-    return tuple(random.choices(list(string.digits) + list(range(0, 10)) + [True, False], k=random.randint(1, 3)))
+def args(random_int) -> tuple:
+    return tuple(random.choices(list(string.digits) + list(range(0, 10)) + [True, False], k=random_int))
 
 
 @pytest.fixture
@@ -38,4 +31,4 @@ def kwargs(args) -> dict:
 
 @pytest.fixture
 def clear_manager():
-    _manager.clear()
+    manager.clear()

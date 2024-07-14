@@ -1,15 +1,19 @@
+from abc import ABC, abstractmethod
 from typing import Optional, Any
 
-config = {
-    "use_fully_qualified_function_id": True
+CONFIG = {
+    "function_id_generator": None,
+    "group_validators": None
 }
 
 
-def _set_key_if_value_exists(key: str, value: Optional[Any]):
+def set_if_value_exists(key: str, value: Optional[Any]):
     if value is None:
         return
-    config[key] = value
+    CONFIG[key] = value
 
 
-def basic_config(use_fully_qualified_function_id: bool = None):
-    _set_key_if_value_exists("use_fully_qualified_function_id", use_fully_qualified_function_id)
+class ConfigReloadable(ABC):
+    @abstractmethod
+    def reload_from_config(self):
+        pass

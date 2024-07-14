@@ -1,7 +1,3 @@
-class DuplicatedSignatureError(Exception):
-    pass
-
-
 class MatchError(Exception):
     pass
 
@@ -14,9 +10,17 @@ class MultipleMatchesFoundError(MatchError):
     pass
 
 
-class MismatchedIdError(Exception):
+class GroupNotFoundError(Exception):
     pass
 
 
-class GroupNotFoundError(Exception):
+class ValidationError(Exception):
+    pass
+
+
+class IdMismatchError(ValidationError):
+    pass
+
+
+class SignatureDuplicationError(ValidationError):
     pass
