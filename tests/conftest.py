@@ -3,16 +3,13 @@ import pytest
 import random
 import string
 from typing import Callable
-from pyloadover.pyloadover import _manager
-from pyloadover.config import basic_config
+from pyloadover.pyloadover import manager, basic_config
+from pyloadover.functions import NameIdGenerator
+
+basic_config(function_id_generator=NameIdGenerator(), group_validators=[])
 
 
-@pytest.fixture
-def use_simple_function_id():
-    basic_config(use_fully_qualified_function_id=False)
-
-
-@pytest.fixture
+@pytest.fixture(scope="session")
 def foo() -> Callable:
     def foo(a: int, b: str, c: bool = True):
         return a, b, c
@@ -38,4 +35,4 @@ def kwargs(args) -> dict:
 
 @pytest.fixture
 def clear_manager():
-    _manager.clear()
+    manager.clear()

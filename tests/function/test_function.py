@@ -1,5 +1,4 @@
 import pytest
-from unittest.mock import patch, MagicMock
 
 from pyloadover.function import Function
 
@@ -23,9 +22,9 @@ def test_arguments_not_match_signature(args, kwargs, foo):
     assert not Function(foo).do_arguments_match(*args, **kwargs)
 
 
-def test_fully_qualified_name_property(foo):
+def test_default_id(foo):
     assert Function(foo).id == "conftest.foo.<locals>.foo"
 
 
-def test_not_fully_qualified_name_property(foo, use_simple_function_id):
+def test_not_fully_qualified_name_id(foo, use_name_as_function_id):
     assert Function(foo).id == "foo"
