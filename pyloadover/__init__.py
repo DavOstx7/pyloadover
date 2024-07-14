@@ -1,9 +1,15 @@
 from typing import Callable
-from .pyloadover import pyloadover, loadover
-from .config import basic_config
+from .functions import Function, FunctionIdGenerator, NameIdGenerator, FullyQualifiedNameIdGenerator
+from .groups import Group, GroupFunctionValidator, EqualIdsValidator, UniqueSignaturesValidator
+from .pyloadover import pyoverload, loadover, basic_config
+
+basic_config(
+    function_id_generator=FullyQualifiedNameIdGenerator(),
+    group_validators=[EqualIdsValidator(), UniqueSignaturesValidator()]
+)
 
 
-class _DynamicGroupLoader:
+class DynamicGroupLoader:
     def __init__(self, name):
         self.name = name
 
@@ -12,8 +18,8 @@ class _DynamicGroupLoader:
         return self
 
     def __call__(self, f: Callable):
-        return pyloadover(self.name)(f)
+        return pyoverload(self.name)(f)
 
 
-def __getattr__(group: str):
-    return _DynamicGroupLoader(group)
+def __getattr__(item: str):
+    return DynamicGroupLoader(item)
