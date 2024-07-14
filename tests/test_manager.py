@@ -40,30 +40,30 @@ def test_get_non_existing_group(MockGroup: MagicMock, MockGroupContext: MagicMoc
 
 
 @patch.object(Manager, 'get_group')
-def test_register_to_group(mock_get_group: MagicMock, random_string):
+def test_register_function_to_group(mock_get_group: MagicMock, random_string):
     manager = Manager()
     mock_function = MagicMock(spec_set=Function)
 
-    manager.register_to_group(random_string, mock_function)
+    manager.register_function_to_group(random_string, mock_function)
 
     mock_get_group.assert_called_once_with(random_string)
     mock_group = mock_get_group.return_value
     mock_group.register_function.assert_called_once_with(mock_function)
 
 
-def test_retrieve_from_existing_group(random_string, args, kwargs):
+def test_retrieve_function_from_existing_group(random_string, args, kwargs):
     manager = Manager()
     mock_group = MagicMock(spec_set=Group)
     manager._id_to_group[random_string] = mock_group
 
-    return_value = manager.retrieve_from_group(random_string, *args, **kwargs)
+    return_value = manager.retrieve_function_from_group(random_string, *args, **kwargs)
 
     mock_group.find_one_function_by_arguments.assert_called_once_with(*args, **kwargs)
     assert return_value == mock_group.find_one_function_by_arguments.return_value
 
 
-def test_retrieve_from_non_existing_group(random_string):
+def test_retrieve_function_from_non_existing_group(random_string):
     manager = Manager()
 
     with pytest.raises(GroupNotFoundError):
-        manager.retrieve_from_group(random_string)
+        manager.retrieve_function_from_group(random_string)

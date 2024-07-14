@@ -20,11 +20,11 @@ def pyoverload(group: str = None):
     def decorator(f: Callable):
         function = Function(FunctionContext(f))
         group_id = group if group is not None else function.id
-        manager.register_to_group(group_id, function)
+        manager.register_function_to_group(group_id, function)
 
         @functools.wraps(f)
         def wrapper(*args, **kwargs):
-            retrieved_function = manager.retrieve_from_group(group_id, *args, **kwargs)
+            retrieved_function = manager.retrieve_function_from_group(group_id, *args, **kwargs)
             return retrieved_function(*args, **kwargs)
 
         return wrapper

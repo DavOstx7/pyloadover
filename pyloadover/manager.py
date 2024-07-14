@@ -30,10 +30,10 @@ class Manager(ConfigReloadable):
 
         return self._id_to_group[group_id]
 
-    def register_to_group(self, group_id: str, function: Function):
+    def register_function_to_group(self, group_id: str, function: Function):
         self.get_group(group_id).register_function(function)
 
-    def retrieve_from_group(self, group_id: str, *args, **kwargs) -> Function:
+    def retrieve_function_from_group(self, group_id: str, *args, **kwargs) -> Function:
         if not self.is_group_exists(group_id):
             raise GroupNotFoundError(f"Group '{group_id}' does not exist")
 
