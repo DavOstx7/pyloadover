@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 from typing import Optional, Any
 
 CONFIG = {
@@ -10,3 +11,9 @@ def set_if_value_exists(key: str, value: Optional[Any]):
     if value is None:
         return
     CONFIG[key] = value
+
+
+class ConfigReloadable(ABC):
+    @abstractmethod
+    def reload_from_config(self):
+        pass
