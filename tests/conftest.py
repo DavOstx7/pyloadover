@@ -2,29 +2,25 @@ import pytest
 
 import random
 import string
-from typing import Callable
 from pyloadover.pyloadover import manager, basic_config
 from pyloadover.functions import NameIdGenerator
 
 basic_config(function_id_generator=NameIdGenerator(), group_validators=[])
 
 
-@pytest.fixture(scope="session")
-def foo() -> Callable:
-    def foo(a: int, b: str, c: bool = True):
-        return a, b, c
-
-    return foo
+@pytest.fixture
+def random_int() -> int:
+    return random.randint(1, 7)
 
 
 @pytest.fixture
-def random_string() -> tuple:
-    return ''.join(random.choices(string.printable, k=random.randint(1, 5)))
+def random_string(random_int) -> tuple:
+    return ''.join(random.choices(string.printable, k=random_int))
 
 
 @pytest.fixture
-def args() -> tuple:
-    return tuple(random.choices(list(string.digits) + list(range(0, 10)) + [True, False], k=random.randint(1, 3)))
+def args(random_int) -> tuple:
+    return tuple(random.choices(list(string.digits) + list(range(0, 10)) + [True, False], k=random_int))
 
 
 @pytest.fixture

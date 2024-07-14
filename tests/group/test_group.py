@@ -1,113 +1,155 @@
 import pytest
+from unittest.mock import patch, MagicMock, call
 
-from pyloadover.group import Group
-from pyloadover.function import Function
-from pyloadover.exceptions import (
-    IdMismatchError, SignatureDuplicationError, NoMatchFoundError, MultipleMatchesFoundError
-)
-
-
-def test_allow_mismatched_names(foo, use_name_as_function_id):
-    group = Group("bar")
-
-    group.register_function(Function(foo))
+from pyloadover.groups.group import Group, GroupContext, GroupFunctionValidator
+from pyloadover.functions.function import Function, FunctionContext
+from pyloadover.exceptions import NoMatchFoundError, MultipleMatchesFoundError
 
 
-def test_not_allow_mismatched_names(foo, use_name_as_function_id):
-    group = Group("bar")
+@patch('pyloadover.groups.group.CONFIG', autospec=True)
+def test_group_reload_from_config(mock_CONFIG, random_int):
+    mock_context = MagicMock(spec_set=GroupContext)
+    mock_functions = [MagicMock(spec_set=Function) for _ in range(random_int)]
+    mock_context.functions = mock_functions
 
-    with pytest.raises(IdMismatchError):
-        group.register_function(Function(foo))
+    group = Group(mock_context)
+    group.reload_from_config()
 
-
-def test_allow_identical_signatures(foo, use_name_as_function_id):
-    group = Group("foo")
-
-    group.register_function(Function(foo))
-    group.register_function(Function(foo))
-
-
-def test_not_allow_identical_signatures(foo, use_name_as_function_id):
-    group = Group("foo")
-
-    group.register_function(Function(foo))
-    with pytest.raises(SignatureDuplicationError):
-        group.register_function(Function(foo))
+    assert group.validators == mock_CONFIG["group_validators"]
+    for mock_function in mock_functions:
+        mock_function.reload_from_config.assert_called_once_with()
 
 
-def test_find_by_arguments(use_name_as_function_id):
-    registry = Group("foo")
+def test_group_clear(random_int, random_string):
+    mock_context = MagicMock(spec_set=GroupContext)
+    mock_functions = [MagicMock(spec_set=Function) for _ in range(random_int)]
+    mock_context.functions = mock_functions
+    mock_validators = [MagicMock(spec_set=GroupFunctionValidator) for _ in range(random_int)]
 
-    def foo():
+    group = Group(mock_context, mock_validators)
+    group.clear()
+
+    assert not mock_functions
+    assert not mock_validators
+
+
+@patch.object(Group, 'validate_function')
+def test_group_register_function(mock_validate_function: MagicMock):
+    mock_context = MagicMock(spec_set=GroupContext)
+    mock_context.functions = []
+    mock_function = MagicMock(spec_set=Function)
+
+    group = Group(mock_context)
+    group.register_function(mock_function)
+
+    mock_validate_function.assert_called_once_with(mock_function)
+    assert mock_context.functions == [mock_function]
+
+
+@patch.object(Group, 'validate_function')
+def test_group_validate_group(mock_validate_function: MagicMock, random_int):
+    mock_context = MagicMock(spec_set=GroupContext)
+    mock_functions = [MagicMock(spec_set=Function) for _ in range(random_int)]
+    mock_context.functions = mock_functions
+
+    group = Group(mock_context)
+    group.validate_group()
+
+    mock_validate_function.assert_has_calls([call(mock_function) for mock_function in mock_functions])
+
+
+def test_group_validate_function(random_int):
+    mock_context = MagicMock(spec_set=GroupContext)
+    mock_validators = [MagicMock(spec_set=GroupFunctionValidator) for _ in range(random_int)]
+    mock_function = MagicMock(spec_set=Function)
+
+    group = Group(mock_context, mock_validators)
+    group.validate_function(mock_function)
+
+    for mock_validator in mock_validators:
+        mock_validator.validate.assert_called_once_with(mock_context, mock_function)
+
+
+def test_find_by_arguments():
+    group = Group(GroupContext("_foo"))
+
+    def _foo():
         pass
 
-    function1 = Function(foo)
-    registry.register_function(function1)
+    function1 = Function(FunctionContext(_foo))
+    group.register_function(function1)
 
-    def foo(a: bool):
+    def _foo(a: bool):
         pass
 
-    function2 = Function(foo)
-    registry.register_function(function2)
+    function2 = Function(FunctionContext(_foo))
+    group.register_function(function2)
 
-    def foo(a: int, b: str, c: bool = True):
+    def _foo(a: int, b: str, c: bool = True):
         pass
 
-    function3 = Function(foo)
-    registry.register_function(function3)
+    function3 = Function(FunctionContext(_foo))
+    group.register_function(function3)
 
-    assert registry.find_functions_by_arguments() == [function1]
-    assert registry.find_functions_by_arguments(True) == [function2]
-    assert registry.find_functions_by_arguments(1, "2", True) == [function3]
-    assert registry.find_functions_by_arguments(False, False, False) == []
+    assert group.find_functions_by_arguments() == [function1]
+    assert group.find_functions_by_arguments(True) == [function2]
+    assert group.find_functions_by_arguments(1, "2", True) == [function3]
+    assert group.find_functions_by_arguments(False, False, False) == []
 
 
-def test_find_one_by_arguments(use_name_as_function_id):
-    registry = Group("foo")
+def test_find_one_by_arguments():
+    group = Group(GroupContext("_foo"))
 
-    def foo():
+    def _foo():
         pass
 
-    function1 = Function(foo)
-    registry.register_function(function1)
+    function1 = Function(FunctionContext(_foo))
+    group.register_function(function1)
 
-    def foo(a: bool):
+    def _foo(a: bool):
         pass
 
-    function2 = Function(foo)
-    registry.register_function(function2)
+    function2 = Function(FunctionContext(_foo))
+    group.register_function(function2)
 
-    def foo(a: int, b: str, c: bool = True):
+    def _foo(a: int, b: str, c: bool = True):
         pass
 
-    function3 = Function(foo)
-    registry.register_function(function3)
+    function3 = Function(FunctionContext(_foo))
+    group.register_function(function3)
 
-    assert registry.find_one_function_by_arguments() == function1
-    assert registry.find_one_function_by_arguments(True) == function2
-    assert registry.find_one_function_by_arguments(1, "2", True) == function3
+    assert group.find_one_function_by_arguments() == function1
+    assert group.find_one_function_by_arguments(True) == function2
+    assert group.find_one_function_by_arguments(1, "2", True) == function3
 
 
-def test_find_one_by_arguments_no_matches(foo):
-    registry = Group("foo")
-    registry.register_function(Function(foo))
+def test_find_one_by_arguments_no_matches():
+    group = Group(GroupContext("_foo"))
+
+    def _foo(a: int, b: str, c: bool = True):
+        pass
+
+    function = Function(FunctionContext(_foo))
+    group.register_function(function)
 
     with pytest.raises(NoMatchFoundError):
-        registry.find_one_function_by_arguments()
+        group.find_one_function_by_arguments()
 
 
 def test_find_one_by_arguments_multiple_matches():
-    registry = Group("foo")
+    group = Group(GroupContext("_foo"))
 
-    def foo():
+    def _foo():
         pass
 
-    registry.register_function(Function(foo))
+    function = Function(FunctionContext(_foo))
+    group.register_function(function)
 
-    def foo(*a, **b):
+    def _foo(*a, **b):
         pass
 
-    registry.register_function(Function(foo))
+    function = Function(FunctionContext(_foo))
+    group.register_function(function)
 
     with pytest.raises(MultipleMatchesFoundError):
-        registry.find_one_function_by_arguments()
+        group.find_one_function_by_arguments()
