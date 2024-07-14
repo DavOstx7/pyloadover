@@ -1,22 +1,26 @@
 from typing import Optional, List
 from pyloadover.config import CONFIG, ConfigReloadable
-from pyloadover.function import Function
-from pyloadover.group.validators import GroupFunctionValidator, GroupContext
+from pyloadover.functions import Function
+from pyloadover.groups.validators import GroupFunctionValidator, GroupContext
 from pyloadover.exceptions import NoMatchFoundError, MultipleMatchesFoundError
 
 
 class Group(ConfigReloadable):
     def __init__(self, context: GroupContext, validators: Optional[List[GroupFunctionValidator]] = None):
-        self.context = context
+        self._context = context
         self.validators = CONFIG["group_validators"] if validators is None else validators
 
     @property
+    def context(self) -> GroupContext:
+        return self._context
+
+    @property
     def id(self) -> str:
-        return self.context.id
+        return self._context.id
 
     @property
     def functions(self) -> List[Function]:
-        return self.context.functions
+        return self._context.functions
 
     def reload_from_config(self):
         self.validators = CONFIG["group_validators"]
@@ -25,7 +29,7 @@ class Group(ConfigReloadable):
             function.reload_from_config()
 
     def clear(self):
-        self.context.functions.clear()
+        self.functions.clear()
         self.validators.clear()
 
     def register_function(self, function: Function):
@@ -39,7 +43,7 @@ class Group(ConfigReloadable):
 
     def validate_function(self, function: Function):
         for validator in self.validators:
-            validator.validate(self.context, function)
+            validator.validate(self._context, function)
 
     def find_functions_by_arguments(self, *args, **kwargs) -> List[Function]:
         return [function for function in self.functions if function.do_arguments_match(*args, **kwargs)]
