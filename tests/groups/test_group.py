@@ -61,7 +61,7 @@ def test_group_validate_function(mock_group_context, mock_group_validators, mock
         mock_validator.validate_function.assert_called_once_with(mock_group_context, mock_function)
 
 
-def test_group_retrieve_matching_functions():
+def test_find_functions_by_arguments():
     group = Group(GroupContext("_foo"))
 
     def _foo():
@@ -82,13 +82,13 @@ def test_group_retrieve_matching_functions():
     function3 = Function(FunctionContext(_foo))
     group.register_function(function3)
 
-    assert group.retrieve_matching_functions() == [function1]
-    assert group.retrieve_matching_functions(True) == [function2]
-    assert group.retrieve_matching_functions(1, "2", True) == [function3]
-    assert group.retrieve_matching_functions(False, False, False) == []
+    assert group.find_functions_by_arguments() == [function1]
+    assert group.find_functions_by_arguments(True) == [function2]
+    assert group.find_functions_by_arguments(1, "2", True) == [function3]
+    assert group.find_functions_by_arguments(False, False, False) == []
 
 
-def test_group_retrieve_single_matching_function():
+def test_find_single_function_by_arguments():
     group = Group(GroupContext("_foo"))
 
     def _foo():
@@ -109,12 +109,12 @@ def test_group_retrieve_single_matching_function():
     function3 = Function(FunctionContext(_foo))
     group.register_function(function3)
 
-    assert group.retrieve_single_matching_function() == function1
-    assert group.retrieve_single_matching_function(True) == function2
-    assert group.retrieve_single_matching_function(1, "2", True) == function3
+    assert group.find_single_function_by_arguments() == function1
+    assert group.find_single_function_by_arguments(True) == function2
+    assert group.find_single_function_by_arguments(1, "2", True) == function3
 
 
-def test_group_retrieve_single_matching_function_no_matches():
+def test_find_single_function_by_arguments_no_matches():
     group = Group(GroupContext("_foo"))
 
     def _foo(a: int, b: str, c: bool = True):
@@ -124,10 +124,10 @@ def test_group_retrieve_single_matching_function_no_matches():
     group.register_function(function)
 
     with pytest.raises(NoMatchFoundError):
-        group.retrieve_single_matching_function()
+        group.find_single_function_by_arguments()
 
 
-def test_group_retrieve_single_matching_function_multiple_matches():
+def test_find_single_function_by_arguments_multiple_matches():
     group = Group(GroupContext("_foo"))
 
     def _foo():
@@ -143,19 +143,19 @@ def test_group_retrieve_single_matching_function_multiple_matches():
     group.register_function(function)
 
     with pytest.raises(MultipleMatchesFoundError):
-        group.retrieve_single_matching_function()
+        group.find_single_function_by_arguments()
 
 
-@patch.object(Group, 'retrieve_single_matching_function')
-def test_group_call_matching_function(mock_retrieve_single_matching_function: MagicMock, mock_group_context, args,
+@patch.object(Group, 'find_single_function_by_arguments')
+def test_group_call_matching_function(mock_find_single_function_by_arguments: MagicMock, mock_group_context, args,
                                       kwargs):
     group = Group(mock_group_context)
 
-    return_value = group.call_matching_function(*args, **kwargs)
+    return_value = group.call_function_by_arguments(*args, **kwargs)
 
-    mock_retrieve_single_matching_function.assert_called_once_with(*args, **kwargs)
-    mock_retrieve_single_matching_function.return_value.assert_called_once_with(*args, **kwargs)
-    assert return_value == mock_retrieve_single_matching_function.return_value.return_value
+    mock_find_single_function_by_arguments.assert_called_once_with(*args, **kwargs)
+    mock_find_single_function_by_arguments.return_value.assert_called_once_with(*args, **kwargs)
+    assert return_value == mock_find_single_function_by_arguments.return_value.return_value
 
 
 @patch('pyloadover.groups.group.Function', autospec=True)

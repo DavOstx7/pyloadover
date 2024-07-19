@@ -75,8 +75,8 @@ def test_group_decorator_on_function(clear_manager, random_string):
     def bar(x: int, y: str):
         return x, y
 
-    assert random_group.call_matching_function(1) == 1
-    assert random_group.call_matching_function(1, "2") == (1, "2")
+    assert random_group.call_function_by_arguments(1) == 1
+    assert random_group.call_function_by_arguments(1, "2") == (1, "2")
 
 
 def test_overload_on_function(clear_manager):

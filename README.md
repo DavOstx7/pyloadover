@@ -103,14 +103,14 @@ def function(first_name: str, middle_name: str, last_name: str):
     return f"Hello {first_name}, your middle name is {middle_name}, and your last name is {last_name}!"
 
 
-print('[1] Calling function("Foo"):')
-print(function_group.call_matching_function("Foo"))  # Method 1
+print('[1] Calling function with params ("Foo"):')
+print(function_group.call_function_by_arguments("Foo"))  # Method 1
 
-print('[2] Calling function("Foo", "Bar"):')
+print('[2] Calling function with params: ("Foo", "Bar"):')
 print(function("Foo", "Bar"))  # Method 2
 
-print('[3] Calling function("Foo", "IDK", "Bar"):')
-print(function_group.retrieve_single_matching_function("Foo", "IDK", "Bar")("Foo", "IDK", "Bar"))  # Method 3
+print('[3] Calling function with params: ("Foo", "IDK", "Bar"):')
+print(function_group.find_single_function_by_arguments("Foo", "IDK", "Bar")("Foo", "IDK", "Bar"))  # Method 3
 ```
 
 ```bash
@@ -124,15 +124,26 @@ Hello Foo, your middle name is IDK, and your last name is Bar!
 
 ### Function ID Generators & Group Function Validators
 
+These objects are used to fine-tune the package, which makes it more solid and customizable.
+
+The function id generators, as their name indicates, are used to generate an id. This id, will be used to identify them,
+and also belong them to a group with a matching id, unless specified otherwise.
+
+The group function validators, as their name indicates, are used to validate functions. These validators will be
+activated upon a function registration, or a manual .validate() group call.
+
+**Here are their respective code definitions:**
+
 * Function ID Generators (Inherit from `FunctionIdGenerator`):
-    * `FullyQualifiedNameIdGenerator` -> Generates an ID which is composed out of a combination of the function's module
-      and the function's qualified name
-    * `NameIdGenerator` -> Generates an ID which is composed out of the function's name
+    * `FullyQualifiedNameIdGenerator` -> Generates an ID which is composed out of the function's module and the
+      function's qualified name.
+    * `NameIdGenerator` -> Generates an ID which is composed out of the function's name.
 
 * Group Function Validators (Inherit from `GroupFunctionValidator`):
-    * `EqualIdsValidator` -> Validates that the ID of the function matches the ID of the group it is registered to
-    * `UniqueSignaturesValidator` -> Validates that the signature of the function does not already exist in the group it
-      is registered to
+    * `EqualIdsValidator` -> Validates that the ID of the registered function matches the ID of the group it is
+      registered to.
+    * `UniqueSignaturesValidator` -> Validates that the signature of the registered function does not already exist in
+      the group it is registered to.
 
 __NOTE__: You could also create your own custom generators / validators!
 
