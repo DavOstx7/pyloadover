@@ -42,7 +42,7 @@ class Group(ConfigReloadable):
 
         self.functions.append(function)
 
-    def validate_group(self):
+    def validate(self):
         for function in self.functions:
             self.validate_function(function)
 
@@ -67,7 +67,7 @@ class Group(ConfigReloadable):
 
         return matches[0]
 
-    def call_function_by_arguments(self, *args, **kwargs) -> Any:
+    def call_function(self, *args, **kwargs) -> Any:
         retrieved_function = self.retrieve_function_by_arguments(*args, **kwargs)
         return retrieved_function(*args, **kwargs)
 

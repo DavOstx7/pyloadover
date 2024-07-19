@@ -53,7 +53,7 @@ def test_group_validate_group(mock_validate_function: MagicMock, random_int):
     mock_context.functions = mock_functions
 
     group = Group(mock_context)
-    group.validate_group()
+    group.validate()
 
     mock_validate_function.assert_has_calls([call(mock_function) for mock_function in mock_functions])
 
