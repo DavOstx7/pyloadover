@@ -7,9 +7,9 @@ from pyloadover.config import set_if_value_exists
 
 def basic_config(propagate: bool = False, *,
                  function_id_generator: Optional[FunctionIdGenerator] = None,
-                 group_validators: Optional[List[GroupFunctionValidator]] = None):
+                 group_function_validators: Optional[List[GroupFunctionValidator]] = None):
     set_if_value_exists("function_id_generator", function_id_generator)
-    set_if_value_exists("group_validators", group_validators)
+    set_if_value_exists("group_function_validators", group_function_validators)
 
     if propagate:
         manager.reload_from_config()

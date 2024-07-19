@@ -9,7 +9,7 @@ from pyloadover.exceptions import NoMatchFoundError, MultipleMatchesFoundError
 class Group(ConfigReloadable):
     def __init__(self, context: GroupContext, validators: Optional[List[GroupFunctionValidator]] = None):
         self._context = context
-        self.validators = CONFIG["group_validators"] if validators is None else validators
+        self.validators = CONFIG["group_function_validators"] if validators is None else validators
 
     @classmethod
     def from_group_id(cls, group_id: str, validators: Optional[List[GroupFunctionValidator]] = None):
@@ -28,7 +28,7 @@ class Group(ConfigReloadable):
         return self._context.functions
 
     def reload_from_config(self):
-        self.validators = CONFIG["group_validators"]
+        self.validators = CONFIG["group_function_validators"]
 
         for function in self.functions:
             function.reload_from_config()
@@ -50,25 +50,25 @@ class Group(ConfigReloadable):
         for validator in self.validators:
             validator.validate(self._context, function)
 
-    def retrieve_functions_by_args(self, *args, **kwargs) -> List[Function]:
-        return [function for function in self.functions if function.do_args_match_signature(*args, **kwargs)]
+    def retrieve_matching_functions(self, *args, **kwargs) -> List[Function]:
+        return [function for function in self.functions if function.do_arguments_match_signature(*args, **kwargs)]
 
-    def retrieve_one_function_by_args(self, *args, **kwargs) -> Function:
-        matches = self.retrieve_functions_by_args(*args, **kwargs)
+    def retrieve_single_matching_function(self, *args, **kwargs) -> Function:
+        matches = self.retrieve_matching_functions(*args, **kwargs)
 
         if not matches:
             raise NoMatchFoundError(
-                f"Provided arguments do not match any signature in group '{self.id}'"
+                f"Provided arguments [{args}, {kwargs}] do not match any signature in group '{self.id}'"
             )
         elif len(matches) > 1:
             raise MultipleMatchesFoundError(
-                f"Provided arguments match multiple signatures in group '{self.id}'"
+                f"Provided arguments [{args}, {kwargs}] match multiple signatures in group '{self.id}'"
             )
 
         return matches[0]
 
-    def call_function(self, *args, **kwargs) -> Any:
-        retrieved_function = self.retrieve_one_function_by_args(*args, **kwargs)
+    def call_matching_function(self, *args, **kwargs) -> Any:
+        retrieved_function = self.retrieve_single_matching_function(*args, **kwargs)
         return retrieved_function(*args, **kwargs)
 
     def wraps(self, function: Function) -> Callable[[...], Any]:
@@ -76,8 +76,7 @@ class Group(ConfigReloadable):
 
         @functools.wraps(function.object)
         def wrapper(*args, **kwargs):
-            retrieved_function = self.retrieve_one_function_by_args(*args, **kwargs)
-            return retrieved_function(*args, **kwargs)
+            return self.call_matching_function(*args, **kwargs)
 
         return wrapper
 

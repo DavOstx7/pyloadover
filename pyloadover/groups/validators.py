@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from pyloadover.functions.function import Function
+from pyloadover.functions.model import Function
 from pyloadover.groups.context import GroupContext
 from pyloadover.exceptions import IdMismatchError, SignatureExistsError
 

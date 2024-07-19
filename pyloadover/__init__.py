@@ -5,7 +5,7 @@ from .pyloadover import pyoverload, overload, get_group, basic_config
 
 basic_config(
     function_id_generator=FullyQualifiedNameIdGenerator(),
-    group_validators=[EqualIdsValidator(), UniqueSignaturesValidator()]
+    group_function_validators=[EqualIdsValidator(), UniqueSignaturesValidator()]
 )
 
 

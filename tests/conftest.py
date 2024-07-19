@@ -5,7 +5,7 @@ import string
 from pyloadover.pyloadover import manager, basic_config
 from pyloadover.functions import NameIdGenerator
 
-basic_config(function_id_generator=NameIdGenerator(), group_validators=[])
+basic_config(function_id_generator=NameIdGenerator(), group_function_validators=[])
 
 
 @pytest.fixture
