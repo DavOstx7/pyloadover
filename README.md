@@ -94,7 +94,7 @@ def function(name: str):
 
 
 @pyoverload("__main__.function")  # Method 2
-def function(first_name: str, last_name: str):  # Second way
+def function(first_name: str, last_name: str):
     return f"Hello {first_name}, your last name is {last_name}!"
 
 
@@ -104,13 +104,13 @@ def function(first_name: str, middle_name: str, last_name: str):
 
 
 print('[1] Calling function("Foo"):')
-print(function_group.call_matching_function("Foo"))
+print(function_group.call_matching_function("Foo"))  # Method 1
 
 print('[2] Calling function("Foo", "Bar"):')
-print(function("Foo", "Bar"))
+print(function("Foo", "Bar"))  # Method 2
 
 print('[3] Calling function("Foo", "IDK", "Bar"):')
-print(function_group.retrieve_single_matching_function("Foo", "IDK", "Bar")("Foo", "IDK", "Bar"))
+print(function_group.retrieve_single_matching_function("Foo", "IDK", "Bar")("Foo", "IDK", "Bar"))  # Method 3
 ```
 
 ```bash
@@ -120,15 +120,6 @@ Hello Foo!
 Hello Foo, your last name is Bar!
 [3] Calling function("Foo", "IDK", "Bar"):
 Hello Foo, your middle name is IDK, and your last name is Bar!
-```
-
-__NOTE__: You can also use the following syntax's:
-
-```bash
-basic_config(
-    function_id_generator=FullyQualifiedNameIdGenerator(),
-    group_validators=[EqualIdsValidator(), UniqueSignaturesValidator()]
-)
 ```
 
 ### Function ID Generators & Group Function Validators
