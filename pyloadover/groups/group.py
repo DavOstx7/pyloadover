@@ -50,11 +50,11 @@ class Group(ConfigReloadable):
         for validator in self.validators:
             validator.validate_function(self._context, function)
 
-    def retrieve_matching_functions(self, *args, **kwargs) -> List[Function]:
+    def find_functions_by_arguments(self, *args, **kwargs) -> List[Function]:
         return [function for function in self.functions if function.do_arguments_match_signature(*args, **kwargs)]
 
-    def retrieve_single_matching_function(self, *args, **kwargs) -> Function:
-        matches = self.retrieve_matching_functions(*args, **kwargs)
+    def find_single_function_by_arguments(self, *args, **kwargs) -> Function:
+        matches = self.find_functions_by_arguments(*args, **kwargs)
 
         if not matches:
             raise NoMatchFoundError(
@@ -67,16 +67,16 @@ class Group(ConfigReloadable):
 
         return matches[0]
 
-    def call_matching_function(self, *args, **kwargs) -> Any:
-        retrieved_function = self.retrieve_single_matching_function(*args, **kwargs)
-        return retrieved_function(*args, **kwargs)
+    def call_function_by_arguments(self, *args, **kwargs) -> Any:
+        function = self.find_single_function_by_arguments(*args, **kwargs)
+        return function(*args, **kwargs)
 
     def wraps(self, function: Function) -> Callable[[...], Any]:
         self.register_function(function)
 
         @functools.wraps(function.object)
         def wrapper(*args, **kwargs):
-            return self.call_matching_function(*args, **kwargs)
+            return self.call_function_by_arguments(*args, **kwargs)
 
         return wrapper
 
