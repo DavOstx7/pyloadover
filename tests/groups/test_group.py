@@ -1,12 +1,12 @@
 import pytest
 from unittest.mock import patch, call, MagicMock
 
-from pyloadover.groups.model import Group, GroupContext, CONFIG
-from pyloadover.functions.model import Function, FunctionContext
+from pyloadover.groups.group import Group, GroupContext, CONFIG
+from pyloadover.functions.function import Function, FunctionContext
 from pyloadover.exceptions import NoMatchFoundError, MultipleMatchesFoundError
 
 
-@patch.dict('pyloadover.groups.model.CONFIG', {}, clear=True)
+@patch.dict('pyloadover.groups.group.CONFIG', {}, clear=True)
 def test_group_reload_from_config(mock_group_context, mock_group_validators, mock_functions):
     CONFIG["group_function_validators"] = mock_group_validators
     mock_group_context.functions = mock_functions
@@ -158,7 +158,7 @@ def test_group_call_matching_function(mock_retrieve_single_matching_function: Ma
     assert return_value == mock_retrieve_single_matching_function.return_value.return_value
 
 
-@patch('pyloadover.groups.model.Function', autospec=True)
+@patch('pyloadover.groups.group.Function', autospec=True)
 @patch.object(Group, 'wraps')
 def test_group_as_decorator(mock_wraps: MagicMock, MockFunction: MagicMock, mock_group_context):
     group = Group(mock_group_context)

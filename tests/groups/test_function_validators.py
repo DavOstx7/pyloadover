@@ -1,6 +1,6 @@
 import pytest
 
-from pyloadover.groups.validators import EqualIdsValidator, UniqueSignaturesValidator
+from pyloadover.groups.function_validators import EqualIdsValidator, UniqueSignaturesValidator
 from pyloadover.exceptions import IdMismatchError, SignatureExistsError
 
 

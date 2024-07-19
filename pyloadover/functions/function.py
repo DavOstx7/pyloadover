@@ -1,7 +1,7 @@
 import inspect
 from typing import Optional, Callable, Any
 from pyloadover.config import CONFIG, ConfigReloadable
-from pyloadover.functions.generators import FunctionIdGenerator, FunctionContext
+from pyloadover.functions.id_generators import FunctionIdGenerator, FunctionContext
 from pyloadover.utils import is_instance
 
 
