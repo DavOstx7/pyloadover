@@ -124,14 +124,14 @@ Hello Foo, your middle name is IDK, and your last name is Bar!
 
 ### Function ID Generators & Group Function Validators
 
-* Function ID Generators:
+* Function ID Generators (Inherit from `FunctionIdGenerator`):
     * `FullyQualifiedNameIdGenerator` -> Generates an ID which is composed out of a combination of the function's module
       and the function's qualified name
     * `NameIdGenerator` -> Generates an ID which is composed out of the function's name
 
-* Group Function Validators:
+* Group Function Validators (Inherit from `GroupFunctionValidator`):
     * `EqualIdsValidator` -> Validates that the ID of the function matches the ID of the group it is registered to
     * `UniqueSignaturesValidator` -> Validates that the signature of the function does not already exist in the group it
       is registered to
 
-
+__NOTE__: You could also create your own custom validators / generators!
