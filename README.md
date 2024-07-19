@@ -75,7 +75,7 @@ __NOTE__: By default, the package is configured as follows:
 ```bash
 basic_config(
     function_id_generator=FullyQualifiedNameIdGenerator(),
-    group_validators=[EqualIdsValidator(), UniqueSignaturesValidator()]
+    group_function_validators=[EqualIdsValidator(), UniqueSignaturesValidator()]
 )
 ```
 
