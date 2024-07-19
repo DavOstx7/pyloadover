@@ -20,12 +20,12 @@ def resolve_group_id(group_id: Optional[str], function: Function):
 
 
 def pyoverload(group_id: str = None):
-    def decorator(_object: Callable[[...], Any]):
-        function = Function(FunctionContext(_object))
+    def decorator(f: Callable[[...], Any]):
+        function = Function(FunctionContext(f))
         group = manager.get_group(resolve_group_id(group_id, function))
         return group.wraps(function)
 
     return decorator
 
 
-loadover = pyoverload()
+overload = pyoverload()

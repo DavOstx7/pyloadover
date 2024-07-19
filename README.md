@@ -12,15 +12,15 @@ pip install pyloadover
 ### loadover
 
 ```python
-from pyloadover import loadover
+from pyloadover import overload
 
 
-@loadover
+@overload
 def function():
     return None
 
 
-@loadover
+@overload
 def function(x: int):
     return x ** 2
 

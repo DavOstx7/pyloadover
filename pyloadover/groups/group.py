@@ -77,6 +77,6 @@ class Group(ConfigReloadable):
 
         return wrapper
 
-    def __call__(self, _object: Callable[[...], Any]) -> Callable[[...], Any]:
-        function = Function(FunctionContext(_object))
+    def __call__(self, f: Callable[[...], Any]) -> Callable[[...], Any]:
+        function = Function(FunctionContext(f))
         return self.wraps(function)

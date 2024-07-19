@@ -3,9 +3,9 @@ from typing import Callable, Any
 
 
 class FunctionContext:
-    def __init__(self, _object: Callable[[...], Any]):
-        self._object = _object
-        self._signature = inspect.signature(_object)
+    def __init__(self, f: Callable[[...], Any]):
+        self._object = f
+        self._signature = inspect.signature(f)
 
     @property
     def object(self) -> Callable[[...], Any]:

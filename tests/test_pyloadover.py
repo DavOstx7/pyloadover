@@ -1,6 +1,6 @@
 from unittest.mock import patch, MagicMock
 
-from pyloadover.pyloadover import pyoverload, loadover
+from pyloadover.pyloadover import pyoverload, overload
 
 
 # @patch('pyloadover.pyloadover.FunctionContext', spec_set=True)
@@ -44,15 +44,15 @@ from pyloadover.pyloadover import pyoverload, loadover
 
 
 def test_loadover_on_function(clear_manager):
-    @loadover
+    @overload
     def foo(x: int):
         return x
 
-    @loadover
+    @overload
     def foo(x: int, y: str):
         return x, y
 
-    @loadover
+    @overload
     def bar(x: int):
         return x
 
@@ -63,15 +63,15 @@ def test_loadover_on_function(clear_manager):
 
 def test_loadover_on_method(clear_manager):
     class Foo:
-        @loadover
+        @overload
         def foo(self, x: int):
             return x
 
-        @loadover
+        @overload
         def foo(self, x: int, y: str):
             return x, y
 
-        @loadover
+        @overload
         def bar(self, x: int):
             return x
 
@@ -84,17 +84,17 @@ def test_loadover_on_method(clear_manager):
 def test_loadover_on_static_method(clear_manager):
     class Foo:
         @staticmethod
-        @loadover
+        @overload
         def foo(x: int):
             return x
 
         @staticmethod
-        @loadover
+        @overload
         def foo(x: int, y: str):
             return x, y
 
         @staticmethod
-        @loadover
+        @overload
         def bar(x: int):
             return x
 
@@ -106,17 +106,17 @@ def test_loadover_on_static_method(clear_manager):
 def test_loadover_on_class_method(clear_manager):
     class Foo:
         @classmethod
-        @loadover
+        @overload
         def foo(cls, x: int):
             return x
 
         @classmethod
-        @loadover
+        @overload
         def foo(cls, x: int, y: str):
             return x, y
 
         @classmethod
-        @loadover
+        @overload
         def bar(cls, x: int):
             return x
 
