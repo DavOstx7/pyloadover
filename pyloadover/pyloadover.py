@@ -1,5 +1,4 @@
-import functools
-from typing import Optional, List, Callable
+from typing import Optional, List, Callable, Any
 from pyloadover.functions import Function, FunctionContext, FunctionIdGenerator
 from pyloadover.groups import GroupFunctionValidator
 from pyloadover.manager import manager
@@ -16,18 +15,12 @@ def basic_config(propagate: bool = False, *,
         manager.reload_from_config()
 
 
-def pyoverload(group: str = None):
-    def decorator(f: Callable):
-        function = Function(FunctionContext(f))
-        group_id = group if group is not None else function.id
-        manager.register_function_to_group(group_id, function)
+def pyoverload(group_id: str = None):
+    def decorator(_object: Callable[[...], Any]):
+        function = Function(FunctionContext(_object))
+        group = manager.get_group(group_id if group_id is not None else function.id)
 
-        @functools.wraps(f)
-        def wrapper(*args, **kwargs):
-            retrieved_function = manager.retrieve_function_from_group(group_id, *args, **kwargs)
-            return retrieved_function(*args, **kwargs)
-
-        return wrapper
+        return group(_object)
 
     return decorator
 

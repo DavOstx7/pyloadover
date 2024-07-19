@@ -37,7 +37,7 @@ class Manager(ConfigReloadable):
         if not self.is_group_exists(group_id):
             raise GroupNotFoundError(f"Group '{group_id}' does not exist")
 
-        return self.get_group(group_id).find_one_function_by_arguments(*args, **kwargs)
+        return self.get_group(group_id).retrieve_function_by_arguments(*args, **kwargs)
 
 
 manager = Manager()

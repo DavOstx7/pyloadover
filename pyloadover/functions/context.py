@@ -1,14 +1,14 @@
 import inspect
-from typing import Callable
+from typing import Callable, Any
 
 
 class FunctionContext:
-    def __init__(self, _object: Callable):
+    def __init__(self, _object: Callable[[...], Any]):
         self._object = _object
         self._signature = inspect.signature(_object)
 
     @property
-    def object(self) -> Callable:
+    def object(self) -> Callable[[...], Any]:
         return self._object
 
     @property

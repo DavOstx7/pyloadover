@@ -118,9 +118,9 @@ def test_find_one_by_arguments():
     function3 = Function(FunctionContext(_foo))
     group.register_function(function3)
 
-    assert group.find_one_function_by_arguments() == function1
-    assert group.find_one_function_by_arguments(True) == function2
-    assert group.find_one_function_by_arguments(1, "2", True) == function3
+    assert group.retrieve_function_by_arguments() == function1
+    assert group.retrieve_function_by_arguments(True) == function2
+    assert group.retrieve_function_by_arguments(1, "2", True) == function3
 
 
 def test_find_one_by_arguments_no_matches():
@@ -133,7 +133,7 @@ def test_find_one_by_arguments_no_matches():
     group.register_function(function)
 
     with pytest.raises(NoMatchFoundError):
-        group.find_one_function_by_arguments()
+        group.retrieve_function_by_arguments()
 
 
 def test_find_one_by_arguments_multiple_matches():
@@ -152,4 +152,4 @@ def test_find_one_by_arguments_multiple_matches():
     group.register_function(function)
 
     with pytest.raises(MultipleMatchesFoundError):
-        group.find_one_function_by_arguments()
+        group.retrieve_function_by_arguments()

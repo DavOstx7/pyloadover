@@ -1,6 +1,7 @@
-from typing import Optional, List
+import functools
+from typing import Optional, List, Callable, Any
 from pyloadover.config import CONFIG, ConfigReloadable
-from pyloadover.functions import Function
+from pyloadover.functions import Function, FunctionContext
 from pyloadover.groups.validators import GroupFunctionValidator, GroupContext
 from pyloadover.exceptions import NoMatchFoundError, MultipleMatchesFoundError
 
@@ -48,7 +49,7 @@ class Group(ConfigReloadable):
     def find_functions_by_arguments(self, *args, **kwargs) -> List[Function]:
         return [function for function in self.functions if function.do_arguments_match(*args, **kwargs)]
 
-    def find_one_function_by_arguments(self, *args, **kwargs) -> Function:
+    def retrieve_function_by_arguments(self, *args, **kwargs) -> Function:
         matches = self.find_functions_by_arguments(*args, **kwargs)
 
         if not matches:
@@ -61,3 +62,18 @@ class Group(ConfigReloadable):
             )
 
         return matches[0]
+
+    def call_function_by_arguments(self, *args, **kwargs) -> Any:
+        retrieved_function = self.retrieve_function_by_arguments(*args, **kwargs)
+        return retrieved_function(*args, **kwargs)
+
+    def __call__(self, _object: Callable[[...], Any]) -> Callable[[...], Any]:
+        function = Function(FunctionContext(_object))
+        self.register_function(function)
+
+        @functools.wraps(_object)
+        def wrapper(*args, **kwargs):
+            retrieved_function = self.retrieve_function_by_arguments(*args, **kwargs)
+            return retrieved_function(*args, **kwargs)
+
+        return wrapper
