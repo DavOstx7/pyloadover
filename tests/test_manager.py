@@ -1,8 +1,7 @@
 import pytest
 from unittest.mock import patch, MagicMock
 
-from pyloadover.manager import Manager, Group, Function
-from pyloadover.exceptions import GroupNotFoundError
+from pyloadover.manager import Manager, Group
 
 
 def test_manager_reload_from_config(args):
@@ -35,33 +34,3 @@ def test_get_non_existing_group(MockGroup: MagicMock, random_string):
     MockGroup.from_id.assert_called_once_with(random_string)
     assert manager._id_to_group[random_string] == MockGroup.from_id.return_value
     assert return_value == MockGroup.from_id.return_value
-
-
-@patch.object(Manager, 'get_group')
-def test_register_function_to_group(mock_get_group: MagicMock, random_string):
-    manager = Manager()
-    mock_function = MagicMock(spec_set=Function)
-
-    manager.register_function_to_group(random_string, mock_function)
-
-    mock_get_group.assert_called_once_with(random_string)
-    mock_group = mock_get_group.return_value
-    mock_group.register_function.assert_called_once_with(mock_function)
-
-
-def test_retrieve_function_from_existing_group(random_string, args, kwargs):
-    manager = Manager()
-    mock_group = MagicMock(spec_set=Group)
-    manager._id_to_group[random_string] = mock_group
-
-    return_value = manager.retrieve_function_from_group(random_string, *args, **kwargs)
-
-    mock_group.retrieve_function_by_arguments.assert_called_once_with(*args, **kwargs)
-    assert return_value == mock_group.retrieve_function_by_arguments.return_value
-
-
-def test_retrieve_function_from_non_existing_group(random_string):
-    manager = Manager()
-
-    with pytest.raises(GroupNotFoundError):
-        manager.retrieve_function_from_group(random_string)

@@ -1,6 +1,6 @@
 from typing import Optional, List, Callable, Any
-from pyloadover.functions import Function, FunctionContext, FunctionIdGenerator
-from pyloadover.groups import GroupFunctionValidator
+from pyloadover.functions import Function, FunctionIdGenerator
+from pyloadover.groups import Group, GroupFunctionValidator
 from pyloadover.manager import manager
 from pyloadover.config import set_if_value_exists
 
@@ -13,6 +13,10 @@ def basic_config(propagate: bool = False, *,
 
     if propagate:
         manager.reload_from_config()
+
+
+def get_group(group_id: str) -> Group:
+    return manager.get_group(group_id)
 
 
 def resolve_group_id(group_id: Optional[str], function: Function):

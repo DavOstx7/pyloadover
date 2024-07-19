@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 import pytest
 from pyloadover.groups.validators import EqualIdsValidator, UniqueSignaturesValidator
 from pyloadover.groups.context import GroupContext, Function
-from pyloadover.exceptions import IdMismatchError, SignatureDuplicationError
+from pyloadover.exceptions import IdMismatchError, SignatureExistsError
 
 
 def test_equal_id_validator_ids_match(random_string):
@@ -42,5 +42,5 @@ def test_unique_signature_validator_signature_exists(random_string):
     mock_group_context.is_signature_exists.return_value = True
     mock_function = MagicMock(spec_set=Function)
 
-    with pytest.raises(SignatureDuplicationError):
+    with pytest.raises(SignatureExistsError):
         validator.validate(mock_group_context, mock_function)

@@ -1,8 +1,6 @@
 from typing import Dict
 from pyloadover.config import ConfigReloadable
-from pyloadover.functions import Function
 from pyloadover.groups import Group
-from pyloadover.exceptions import GroupNotFoundError
 
 
 class Manager(ConfigReloadable):
@@ -29,15 +27,6 @@ class Manager(ConfigReloadable):
             self._id_to_group[group_id] = Group.from_id(group_id)
 
         return self._id_to_group[group_id]
-
-    def register_function_to_group(self, group_id: str, function: Function):
-        self.get_group(group_id).register_function(function)
-
-    def retrieve_function_from_group(self, group_id: str, *args, **kwargs) -> Function:
-        if not self.is_group_exists(group_id):
-            raise GroupNotFoundError(f"Group '{group_id}' does not exist")
-
-        return self.get_group(group_id).retrieve_function_by_arguments(*args, **kwargs)
 
 
 manager = Manager()

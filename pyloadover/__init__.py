@@ -1,7 +1,7 @@
 from typing import Callable
 from .functions import Function, FunctionIdGenerator, NameIdGenerator, FullyQualifiedNameIdGenerator
 from .groups import Group, GroupFunctionValidator, EqualIdsValidator, UniqueSignaturesValidator
-from .pyloadover import pyoverload, overload, basic_config
+from .pyloadover import pyoverload, overload, get_group, basic_config
 
 basic_config(
     function_id_generator=FullyQualifiedNameIdGenerator(),
