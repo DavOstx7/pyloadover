@@ -8,7 +8,7 @@ Repository for developing and maintaining the code for pyloadover
 pip install pyloadover
 ```
 
-### Basic Usage
+## Basic Usage
 
 ```python
 from pyloadover import overload
@@ -43,7 +43,7 @@ None
 pyloadover.exceptions.NoMatchFoundError: Provided arguments [(5, 25, 125), {}] do not match any signature in group '__main__.function'
 ```
 
-### Basic Config
+## Basic Config
 
 ```python
 from pyloadover import overload, basic_config, FullyQualifiedNameIdGenerator, UniqueSignaturesValidator
@@ -79,7 +79,7 @@ basic_config(
 )
 ```
 
-### Groups
+## Groups
 
 ```python
 import pyloadover
@@ -122,28 +122,27 @@ Hello Foo, your last name is Bar!
 Hello Foo, your middle name is IDK, and your last name is Bar!
 ```
 
-### Function ID Generators & Group Function Validators
+## Function ID Generators & Group Function Validators
 
-These objects are used to fine-tune the package, which makes it more solid and customizable.
+These objects are used to fine-tune the package, and make it more solid/customizable.
+
+### Function ID Generators
 
 The function id generators, as their name indicates, are used to generate an id. This id, will be used to identify them,
 and also belong them to a group with a matching id, unless specified otherwise.
 
+* `FullyQualifiedNameIdGenerator`: Generates an ID which is composed out of the function's module and the function's
+  qualified name.
+* `NameIdGenerator`: Generates an ID which is composed out of the function's name.
+
+### Group Function Validators
+
 The group function validators, as their name indicates, are used to validate functions. These validators will be
 activated upon a function registration, or a manual .validate() group call.
 
-**Here are their respective code definitions:**
-
-* Function ID Generators (Inherit from `FunctionIdGenerator`):
-    * `FullyQualifiedNameIdGenerator` -> Generates an ID which is composed out of the function's module and the
-      function's qualified name.
-    * `NameIdGenerator` -> Generates an ID which is composed out of the function's name.
-
-* Group Function Validators (Inherit from `GroupFunctionValidator`):
-    * `EqualIdsValidator` -> Validates that the ID of the registered function matches the ID of the group it is
-      registered to.
-    * `UniqueSignaturesValidator` -> Validates that the signature of the registered function does not already exist in
-      the group it is registered to.
+* `EqualIdsValidator`: Validates that the ID of the registered function matches the ID of the group it is registered to.
+* `UniqueSignaturesValidator`: Validates that the signature of the registered function does not already exist in the
+  group it is registered to.
 
 __NOTE__: You could also create your own custom generators / validators!
 
