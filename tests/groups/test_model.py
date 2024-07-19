@@ -58,7 +58,7 @@ def test_group_validate_function(mock_group_context, mock_group_validators, mock
     group.validate_function(mock_function)
 
     for mock_validator in mock_group_validators:
-        mock_validator.validate.assert_called_once_with(mock_group_context, mock_function)
+        mock_validator.validate_function.assert_called_once_with(mock_group_context, mock_function)
 
 
 def test_group_retrieve_matching_functions():

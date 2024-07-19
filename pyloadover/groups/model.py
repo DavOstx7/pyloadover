@@ -48,7 +48,7 @@ class Group(ConfigReloadable):
 
     def validate_function(self, function: Function):
         for validator in self.validators:
-            validator.validate(self._context, function)
+            validator.validate_function(self._context, function)
 
     def retrieve_matching_functions(self, *args, **kwargs) -> List[Function]:
         return [function for function in self.functions if function.do_arguments_match_signature(*args, **kwargs)]
