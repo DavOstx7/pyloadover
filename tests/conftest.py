@@ -6,8 +6,9 @@ import inspect
 import string
 from typing import List, Callable, Dict
 from pyloadover.pyloadover import manager, basic_config
-from pyloadover.functions import Function, FunctionContext, FunctionIdGenerator, NameIdGenerator
+from pyloadover.functions import Function, FunctionContext, FunctionIdGenerator
 from pyloadover.groups import Group, GroupContext, GroupFunctionValidator
+from pyloadover.generators import NameIdGenerator
 
 basic_config(function_id_generator=NameIdGenerator(), group_function_validators=[])
 

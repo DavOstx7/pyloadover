@@ -2,7 +2,7 @@ import functools
 from typing import Optional, List, Callable, Any
 from pyloadover.config import CONFIG, ConfigReloadable
 from pyloadover.functions import Function
-from pyloadover.groups.validators import GroupFunctionValidator, GroupContext
+from pyloadover.validators import GroupFunctionValidator, GroupContext
 from pyloadover.exceptions import NoMatchFoundError, MultipleMatchesFoundError
 
 

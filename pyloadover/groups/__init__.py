@@ -1,3 +1,3 @@
 from .model import Group
 from .context import GroupContext
-from .validators import GroupFunctionValidator, EqualIdsValidator, UniqueSignaturesValidator
+from pyloadover.validators import GroupFunctionValidator, EqualIdsValidator, UniqueSignaturesValidator

@@ -1,6 +1,8 @@
 from typing import Callable
-from .functions import Function, FunctionIdGenerator, NameIdGenerator, FullyQualifiedNameIdGenerator
-from .groups import Group, GroupFunctionValidator, EqualIdsValidator, UniqueSignaturesValidator
+from .functions import Function
+from .generators import FunctionIdGenerator, NameIdGenerator, FullyQualifiedNameIdGenerator
+from .groups import Group
+from .validators import GroupFunctionValidator, EqualIdsValidator, UniqueSignaturesValidator
 from .pyloadover import pyoverload, overload, get_group, basic_config
 
 basic_config(

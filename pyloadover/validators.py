@@ -4,7 +4,13 @@ from pyloadover.groups.context import GroupContext
 from pyloadover.exceptions import IdMismatchError, SignatureExistsError
 
 
-class GroupFunctionValidator(ABC):
+class Validator(ABC):
+    @abstractmethod
+    def validate(self, *args, **kwargs):
+        pass
+
+
+class GroupFunctionValidator(Validator):
     @abstractmethod
     def validate(self, group_context: GroupContext, function: Function):
         pass

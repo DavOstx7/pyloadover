@@ -1,7 +1,7 @@
 import inspect
 from typing import Optional, Callable, Any
 from pyloadover.config import CONFIG, ConfigReloadable
-from pyloadover.functions.generators import FunctionIdGenerator, FunctionContext
+from pyloadover.generators import FunctionIdGenerator, FunctionContext
 from pyloadover.utils import is_instance
 
 
@@ -16,7 +16,7 @@ class Function(ConfigReloadable):
 
     @property
     def id(self) -> str:
-        return self.id_generator.generate_id(self._context)
+        return self.id_generator.generate(self._context)
 
     @property
     def context(self) -> FunctionContext:
