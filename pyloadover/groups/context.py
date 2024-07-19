@@ -4,8 +4,8 @@ from pyloadover.functions import Function
 
 
 class GroupContext:
-    def __init__(self, _id: str, functions: Optional[List[Function]] = None):
-        self._id = _id
+    def __init__(self, group_id: str, functions: Optional[List[Function]] = None):
+        self._id = group_id
         self._functions = [] if functions is None else functions
 
     @property

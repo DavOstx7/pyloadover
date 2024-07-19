@@ -26,17 +26,15 @@ def test_get_existing_group(random_string):
     assert return_value == mock_group
 
 
-@patch('pyloadover.manager.GroupContext')
 @patch('pyloadover.manager.Group')
-def test_get_non_existing_group(MockGroup: MagicMock, MockGroupContext: MagicMock, random_string):
+def test_get_non_existing_group(MockGroup: MagicMock, random_string):
     manager = Manager()
 
     return_value = manager.get_group(random_string)
 
-    MockGroupContext.assert_called_once_with(random_string)
-    MockGroup.assert_called_once_with(MockGroupContext.return_value)
-    assert manager._id_to_group[random_string] == MockGroup.return_value
-    assert return_value == MockGroup.return_value
+    MockGroup.from_id.assert_called_once_with(random_string)
+    assert manager._id_to_group[random_string] == MockGroup.from_id.return_value
+    assert return_value == MockGroup.from_id.return_value
 
 
 @patch.object(Manager, 'get_group')

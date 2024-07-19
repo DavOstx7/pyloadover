@@ -10,6 +10,10 @@ class Function(ConfigReloadable):
         self._context = context
         self.id_generator = CONFIG["function_id_generator"] if id_generator is None else id_generator
 
+    @classmethod
+    def from_callable(cls, f: Callable[[...], Any], id_generator: Optional[FunctionIdGenerator] = None):
+        return cls(FunctionContext(f), id_generator=id_generator)
+
     @property
     def id(self) -> str:
         return self.id_generator.generate_id(self._context)

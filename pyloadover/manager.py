@@ -1,7 +1,7 @@
 from typing import Dict
 from pyloadover.config import ConfigReloadable
 from pyloadover.functions import Function
-from pyloadover.groups import Group, GroupContext
+from pyloadover.groups import Group
 from pyloadover.exceptions import GroupNotFoundError
 
 
@@ -21,12 +21,12 @@ class Manager(ConfigReloadable):
     def clear(self):
         self._id_to_group.clear()
 
-    def is_group_exists(self, group_id: str) -> bool:
-        return group_id in self._id_to_group
+    def is_group_exists(self, _id: str) -> bool:
+        return _id in self._id_to_group
 
     def get_group(self, group_id: str) -> Group:
         if group_id not in self._id_to_group:
-            self._id_to_group[group_id] = Group(GroupContext(group_id))
+            self._id_to_group[group_id] = Group.from_id(group_id)
 
         return self._id_to_group[group_id]
 

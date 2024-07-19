@@ -21,7 +21,7 @@ def resolve_group_id(group_id: Optional[str], function: Function):
 
 def pyoverload(group_id: str = None):
     def decorator(f: Callable[[...], Any]):
-        function = Function(FunctionContext(f))
+        function = Function.from_callable(f)
         group = manager.get_group(resolve_group_id(group_id, function))
         return group.wraps(function)
 

@@ -1,7 +1,7 @@
 import functools
 from typing import Optional, List, Callable, Any
 from pyloadover.config import CONFIG, ConfigReloadable
-from pyloadover.functions import Function, FunctionContext
+from pyloadover.functions import Function
 from pyloadover.groups.validators import GroupFunctionValidator, GroupContext
 from pyloadover.exceptions import NoMatchFoundError, MultipleMatchesFoundError
 
@@ -10,6 +10,10 @@ class Group(ConfigReloadable):
     def __init__(self, context: GroupContext, validators: Optional[List[GroupFunctionValidator]] = None):
         self._context = context
         self.validators = CONFIG["group_validators"] if validators is None else validators
+
+    @classmethod
+    def from_id(cls, _id: str, validators: Optional[List[GroupFunctionValidator]] = None):
+        return cls(GroupContext(_id), validators=validators)
 
     @property
     def context(self) -> GroupContext:
@@ -78,5 +82,5 @@ class Group(ConfigReloadable):
         return wrapper
 
     def __call__(self, f: Callable[[...], Any]) -> Callable[[...], Any]:
-        function = Function(FunctionContext(f))
+        function = Function.from_callable(f)
         return self.wraps(function)
