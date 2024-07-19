@@ -67,7 +67,7 @@ def function():
 ```
 
 ```bash
-pyloadover.exceptions.SignatureExistsError: Function signature () already exists in group '__main__.function'
+pyloadover.exceptions.SignatureExistsError: Function '__main__.function' signature () already exists in group '__main__.function'
 ```
 
 __NOTE__: By default, the package is configured as follows:
@@ -134,7 +134,7 @@ Hello Foo, your middle name is IDK, and your last name is Bar!
     * `UniqueSignaturesValidator` -> Validates that the signature of the function does not already exist in the group it
       is registered to
 
-__NOTE__: You could also create your own custom validators / generators!
+__NOTE__: You could also create your own custom generators / validators!
 
 ```python
 from pyloadover.functions import Function, FunctionContext, FunctionIdGenerator
