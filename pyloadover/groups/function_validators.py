@@ -20,5 +20,5 @@ class UniqueSignaturesValidator(GroupFunctionValidator):
     def validate_function(self, group_context: GroupContext, function: Function):
         if group_context.is_signature_exists(function.signature):
             raise SignatureExistsError(
-                f"Function signature {function.signature} already exists in group '{group_context.id}'"
+                f"Function '{function.id}' signature {function.signature} already exists in group '{group_context.id}'"
             )
