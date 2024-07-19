@@ -1,5 +1,5 @@
 import inspect
-from typing import Optional
+from typing import Optional, Callable, Any
 from pyloadover.config import CONFIG, ConfigReloadable
 from pyloadover.functions.generators import FunctionIdGenerator, FunctionContext
 from pyloadover.utils import is_instance
@@ -17,6 +17,10 @@ class Function(ConfigReloadable):
     @property
     def context(self) -> FunctionContext:
         return self._context
+
+    @property
+    def object(self) -> Callable[[...], Any]:
+        return self._context.object
 
     @property
     def name(self) -> str:
@@ -46,4 +50,4 @@ class Function(ConfigReloadable):
             return False
 
     def __call__(self, *args, **kwargs):
-        return self._context.object(*args, **kwargs)
+        return self.object(*args, **kwargs)

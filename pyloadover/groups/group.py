@@ -67,13 +67,16 @@ class Group(ConfigReloadable):
         retrieved_function = self.retrieve_function_by_arguments(*args, **kwargs)
         return retrieved_function(*args, **kwargs)
 
-    def __call__(self, _object: Callable[[...], Any]) -> Callable[[...], Any]:
-        function = Function(FunctionContext(_object))
+    def wraps(self, function: Function) -> Callable[[...], Any]:
         self.register_function(function)
 
-        @functools.wraps(_object)
+        @functools.wraps(function.object)
         def wrapper(*args, **kwargs):
             retrieved_function = self.retrieve_function_by_arguments(*args, **kwargs)
             return retrieved_function(*args, **kwargs)
 
         return wrapper
+
+    def __call__(self, _object: Callable[[...], Any]) -> Callable[[...], Any]:
+        function = Function(FunctionContext(_object))
+        return self.wraps(function)

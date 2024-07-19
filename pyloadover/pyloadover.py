@@ -15,12 +15,15 @@ def basic_config(propagate: bool = False, *,
         manager.reload_from_config()
 
 
+def resolve_group_id(group_id: Optional[str], function: Function):
+    return function.id if group_id is None else group_id
+
+
 def pyoverload(group_id: str = None):
     def decorator(_object: Callable[[...], Any]):
         function = Function(FunctionContext(_object))
-        group = manager.get_group(group_id if group_id is not None else function.id)
-
-        return group(_object)
+        group = manager.get_group(resolve_group_id(group_id, function))
+        return group.wraps(function)
 
     return decorator
 

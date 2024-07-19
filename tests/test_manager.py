@@ -58,8 +58,8 @@ def test_retrieve_function_from_existing_group(random_string, args, kwargs):
 
     return_value = manager.retrieve_function_from_group(random_string, *args, **kwargs)
 
-    mock_group.find_one_function_by_arguments.assert_called_once_with(*args, **kwargs)
-    assert return_value == mock_group.find_one_function_by_arguments.return_value
+    mock_group.retrieve_function_by_arguments.assert_called_once_with(*args, **kwargs)
+    assert return_value == mock_group.retrieve_function_by_arguments.return_value
 
 
 def test_retrieve_function_from_non_existing_group(random_string):

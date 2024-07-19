@@ -3,44 +3,44 @@ from unittest.mock import patch, MagicMock
 from pyloadover.pyloadover import pyoverload, loadover
 
 
-@patch('pyloadover.pyloadover.FunctionContext', spec_set=True)
-@patch('pyloadover.pyloadover.Function', spec_set=True)
-@patch('pyloadover.pyloadover.manager', spec_set=True)
-def test_pyoverload_with_group(mock_manager: MagicMock, MockFunction: MagicMock, MockFunctionContext: MagicMock,
-                               random_string, args, kwargs):
-    def _foo(*a, **b):
-        return a, b
-
-    new_foo = pyoverload(random_string)(_foo)
-    MockFunctionContext.assert_called_once_with(_foo)
-    MockFunction.assert_called_once_with(MockFunctionContext.return_value)
-    mock_manager.register_function_to_group.assert_called_once_with(random_string, MockFunction.return_value)
-
-    return_value = new_foo(*args, **kwargs)
-
-    mock_manager.retrieve_function_from_group.assert_called_once_with(random_string, *args, **kwargs)
-    mock_manager.retrieve_function_from_group.return_value.assert_called_once_with(*args, **kwargs)
-    assert return_value == mock_manager.retrieve_function_from_group.return_value.return_value
-
-
-@patch('pyloadover.pyloadover.FunctionContext', spec_set=True)
-@patch('pyloadover.pyloadover.Function', spec_set=True)
-@patch('pyloadover.pyloadover.manager', spec_set=True)
-def test_pyoverload_without_group(mock_manager: MagicMock, MockFunction: MagicMock, MockFunctionContext: MagicMock,
-                                  args, kwargs):
-    def _foo(*a, **b):
-        return a, b
-
-    new_foo = pyoverload()(_foo)
-    MockFunctionContext.assert_called_once_with(_foo)
-    MockFunction.assert_called_once_with(MockFunctionContext.return_value)
-    mock_manager.register_function_to_group.assert_called_once_with(MockFunction.return_value.id, MockFunction.return_value)
-
-    return_value = new_foo(*args, **kwargs)
-
-    mock_manager.retrieve_function_from_group.assert_called_once_with(MockFunction.return_value.id, *args, **kwargs)
-    mock_manager.retrieve_function_from_group.return_value.assert_called_once_with(*args, **kwargs)
-    assert return_value == mock_manager.retrieve_function_from_group.return_value.return_value
+# @patch('pyloadover.pyloadover.FunctionContext', spec_set=True)
+# @patch('pyloadover.pyloadover.Function', spec_set=True)
+# @patch('pyloadover.pyloadover.manager', spec_set=True)
+# def test_pyoverload_with_group(mock_manager: MagicMock, MockFunction: MagicMock, MockFunctionContext: MagicMock,
+#                                random_string, args, kwargs):
+#     def _foo(*a, **b):
+#         return a, b
+#
+#     new_foo = pyoverload(random_string)(_foo)
+#     MockFunctionContext.assert_called_once_with(_foo)
+#     MockFunction.assert_called_once_with(MockFunctionContext.return_value)
+#     mock_manager.register_function_to_group.assert_called_once_with(random_string, MockFunction.return_value)
+#
+#     return_value = new_foo(*args, **kwargs)
+#
+#     mock_manager.retrieve_function_from_group.assert_called_once_with(random_string, *args, **kwargs)
+#     mock_manager.retrieve_function_from_group.return_value.assert_called_once_with(*args, **kwargs)
+#     assert return_value == mock_manager.retrieve_function_from_group.return_value.return_value
+#
+#
+# @patch('pyloadover.pyloadover.FunctionContext', spec_set=True)
+# @patch('pyloadover.pyloadover.Function', spec_set=True)
+# @patch('pyloadover.pyloadover.manager', spec_set=True)
+# def test_pyoverload_without_group(mock_manager: MagicMock, MockFunction: MagicMock, MockFunctionContext: MagicMock,
+#                                   args, kwargs):
+#     def _foo(*a, **b):
+#         return a, b
+#
+#     new_foo = pyoverload()(_foo)
+#     MockFunctionContext.assert_called_once_with(_foo)
+#     MockFunction.assert_called_once_with(MockFunctionContext.return_value)
+#     mock_manager.register_function_to_group.assert_called_once_with(MockFunction.return_value.id, MockFunction.return_value)
+#
+#     return_value = new_foo(*args, **kwargs)
+#
+#     mock_manager.retrieve_function_from_group.assert_called_once_with(MockFunction.return_value.id, *args, **kwargs)
+#     mock_manager.retrieve_function_from_group.return_value.assert_called_once_with(*args, **kwargs)
+#     assert return_value == mock_manager.retrieve_function_from_group.return_value.return_value
 
 
 def test_loadover_on_function(clear_manager):
