@@ -1,4 +1,4 @@
-from pyloadover.functions.generators import NameIdGenerator, FullyQualifiedNameIdGenerator
+from pyloadover.functions.id_generators import NameIdGenerator, FullyQualifiedNameIdGenerator
 
 
 def test_name_id_generator(mock_function_context):

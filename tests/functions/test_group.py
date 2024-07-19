@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import patch
 
-from pyloadover.functions.model import Function, FunctionContext, CONFIG
+from pyloadover.functions.function import Function, FunctionContext, CONFIG
 
 
 def test_function_id(mock_function_context, mock_function_id_generator):
@@ -11,7 +11,7 @@ def test_function_id(mock_function_context, mock_function_id_generator):
     assert return_value == mock_function_id_generator.generate_id.return_value
 
 
-@patch.dict('pyloadover.functions.model.CONFIG', {}, clear=True)
+@patch.dict('pyloadover.functions.function.CONFIG', {}, clear=True)
 def test_function_reload_from_config(mock_function_context, mock_function_id_generator):
     CONFIG["function_id_generator"] = mock_function_id_generator
     function = Function(mock_function_context)

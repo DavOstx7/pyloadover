@@ -1,3 +1,3 @@
-from .model import Function
+from .function import Function
 from .context import FunctionContext
-from .generators import FunctionIdGenerator, NameIdGenerator, FullyQualifiedNameIdGenerator
+from .id_generators import FunctionIdGenerator, NameIdGenerator, FullyQualifiedNameIdGenerator

@@ -8,7 +8,7 @@ Repository for developing and maintaining the code for pyloadover
 pip install pyloadover
 ```
 
-### Usage
+### Basic Usage
 
 ```python
 from pyloadover import overload
@@ -135,3 +135,18 @@ Hello Foo, your middle name is IDK, and your last name is Bar!
       is registered to
 
 __NOTE__: You could also create your own custom validators / generators!
+
+```python
+from pyloadover.functions import Function, FunctionContext, FunctionIdGenerator
+from pyloadover.groups import GroupContext, GroupFunctionValidator
+
+
+class CustomIdGenerator(FunctionIdGenerator):
+    def generate_id(self, context: FunctionContext) -> str:
+        pass
+
+
+class CustomFunctionValidator(GroupFunctionValidator):
+    def validate_function(self, group_context: GroupContext, function: Function):
+        pass
+```
