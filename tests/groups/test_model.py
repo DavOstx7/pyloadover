@@ -8,13 +8,13 @@ from pyloadover.exceptions import NoMatchFoundError, MultipleMatchesFoundError
 
 @patch.dict('pyloadover.groups.model.CONFIG', {}, clear=True)
 def test_group_reload_from_config(mock_group_context, mock_group_validators, mock_functions):
-    CONFIG["group_validators"] = mock_group_validators
+    CONFIG["group_function_validators"] = mock_group_validators
     mock_group_context.functions = mock_functions
     group = Group(mock_group_context)
 
     group.reload_from_config()
 
-    assert group.validators == CONFIG["group_validators"]
+    assert group.validators == CONFIG["group_function_validators"]
     for mock_function in mock_functions:
         mock_function.reload_from_config.assert_called_once_with()
 
@@ -166,8 +166,8 @@ def test_group_as_decorator(mock_wraps: MagicMock, MockFunction: MagicMock, mock
     def _foo():
         pass
 
-    new_foo = group(_foo)
+    return_value = group(_foo)
 
     MockFunction.from_callable.assert_called_once_with(_foo)
     mock_wraps.assert_called_once_with(MockFunction.from_callable.return_value)
-    assert new_foo == mock_wraps.return_value
+    assert return_value == mock_wraps.return_value
