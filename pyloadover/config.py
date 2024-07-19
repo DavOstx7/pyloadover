@@ -3,7 +3,7 @@ from typing import Optional, Any
 
 CONFIG = {
     "function_id_generator": None,
-    "group_validators": None
+    "group_function_validators": None
 }
 
 

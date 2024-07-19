@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
-from pyloadover.functions.function import Function
+from pyloadover.functions.model import Function
 from pyloadover.groups.context import GroupContext
-from pyloadover.exceptions import IdMismatchError, SignatureDuplicationError
+from pyloadover.exceptions import IdMismatchError, SignatureExistsError
 
 
 class GroupFunctionValidator(ABC):
@@ -19,6 +19,6 @@ class EqualIdsValidator(GroupFunctionValidator):
 class UniqueSignaturesValidator(GroupFunctionValidator):
     def validate(self, group_context: GroupContext, function: Function):
         if group_context.is_signature_exists(function.signature):
-            raise SignatureDuplicationError(
+            raise SignatureExistsError(
                 f"Function signature {function.signature} already exists in group '{group_context.id}'"
             )

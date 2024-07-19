@@ -1,11 +1,23 @@
 import pytest
+from unittest.mock import MagicMock
 
 import random
+import inspect
 import string
+from typing import List, Callable, Dict
 from pyloadover.pyloadover import manager, basic_config
-from pyloadover.functions import NameIdGenerator
+from pyloadover.functions import Function, FunctionContext, FunctionIdGenerator, NameIdGenerator
+from pyloadover.groups import Group, GroupContext, GroupFunctionValidator
 
-basic_config(function_id_generator=NameIdGenerator(), group_validators=[])
+basic_config(function_id_generator=NameIdGenerator(), group_function_validators=[])
+
+
+@pytest.fixture
+def foo_callable() -> Callable:
+    def foo():
+        pass
+
+    return foo
 
 
 @pytest.fixture
@@ -27,6 +39,56 @@ def args(random_int) -> tuple:
 def kwargs(args) -> dict:
     names = tuple(random.choices(string.ascii_lowercase + string.ascii_uppercase, k=len(args)))
     return {name: arg for name, arg in zip(names, args)}
+
+
+@pytest.fixture
+def mock_object() -> MagicMock:
+    return MagicMock()
+
+
+@pytest.fixture
+def mock_function_signature() -> MagicMock:
+    return MagicMock(spec_set=inspect.Signature)
+
+
+@pytest.fixture
+def mock_function_id_generator() -> MagicMock:
+    return MagicMock(spec_set=FunctionIdGenerator)
+
+
+@pytest.fixture
+def mock_function_context() -> MagicMock:
+    return MagicMock(spec_set=FunctionContext)
+
+
+@pytest.fixture
+def mock_function() -> MagicMock:
+    return MagicMock(spec_set=Function)
+
+
+@pytest.fixture
+def mock_functions(random_int) -> List[MagicMock]:
+    return [MagicMock(spec_set=Function) for _ in range(random_int)]
+
+
+@pytest.fixture
+def mock_group_validators(random_int) -> List[MagicMock]:
+    return [MagicMock(spec_set=GroupFunctionValidator) for _ in range(random_int)]
+
+
+@pytest.fixture
+def mock_group_context() -> MagicMock:
+    return MagicMock(spec_set=GroupContext)
+
+
+@pytest.fixture
+def mock_group() -> MagicMock:
+    return MagicMock(spec_set=Group)
+
+
+@pytest.fixture
+def mock_id_to_group(args) -> Dict[str, MagicMock]:
+    return {arg: MagicMock(spec_set=Group) for arg in args}
 
 
 @pytest.fixture

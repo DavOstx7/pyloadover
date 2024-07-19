@@ -4,8 +4,7 @@ from pyloadover.functions.context import FunctionContext
 
 
 @patch('inspect.signature', autospec=True)
-def test_context_properties(mock_signature: MagicMock):
-    mock_object = MagicMock()
+def test_function_context_properties(mock_signature: MagicMock, mock_object):
     mock_object.__name__ = "a"
     mock_object.__qualname__ = "b"
     mock_object.__module__ = "c"

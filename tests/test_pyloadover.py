@@ -1,58 +1,94 @@
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch, call, MagicMock
 
-from pyloadover.pyloadover import pyoverload, loadover
+from pyloadover.pyloadover import basic_config, get_group, resolve_group_id, pyoverload, overload
+from pyloadover.pyloadover import Function
 
 
-@patch('pyloadover.pyloadover.FunctionContext', spec_set=True)
+@patch('pyloadover.pyloadover.set_if_value_exists')
+def test_basic_config(mock_set_if_value_exists: MagicMock, mock_function_id_generator, mock_group_validators):
+    expected_calls = 2
+
+    basic_config(
+        function_id_generator=mock_function_id_generator,
+        group_function_validators=mock_group_validators
+    )
+
+    assert mock_set_if_value_exists.call_count == expected_calls
+    mock_set_if_value_exists.assert_has_calls(
+        [
+            call("function_id_generator", mock_function_id_generator),
+            call("group_function_validators", mock_group_validators)
+        ]
+    )
+
+
+@patch('pyloadover.pyloadover.manager', spec_set=True)
+def test_basic_config_with_propagate(mock_manager: MagicMock):
+    basic_config(propagate=True)
+    mock_manager.reload_from_config.assert_called_once_with()
+
+
+@patch('pyloadover.pyloadover.manager', spec_set=True)
+def test_basic_config_without_propagate(mock_manager: MagicMock):
+    basic_config(propagate=True)
+    mock_manager.reload_from_config.assert_called_once_with()
+
+
+@patch('pyloadover.pyloadover.manager', spec_set=True)
+def test_get_group(mock_manager: MagicMock, random_string):
+    return_value = get_group(random_string)
+
+    mock_manager.get_group.assert_called_once_with(random_string)
+    assert return_value == mock_manager.get_group.return_value
+
+
+def test_resolve_group_id_with_group_id(foo_callable, random_string):
+    assert random_string == resolve_group_id(random_string, Function.from_callable(foo_callable))
+
+
+def test_resolve_group_id_without_group_id(foo_callable):
+    assert "foo" == resolve_group_id(None, Function.from_callable(foo_callable))
+
+
+@patch('pyloadover.pyloadover.resolve_group_id', spec_set=True)
 @patch('pyloadover.pyloadover.Function', spec_set=True)
 @patch('pyloadover.pyloadover.manager', spec_set=True)
-def test_pyoverload_with_group(mock_manager: MagicMock, MockFunction: MagicMock, MockFunctionContext: MagicMock,
-                               random_string, args, kwargs):
-    def _foo(*a, **b):
-        return a, b
+def test_pyoverload_decorator(mock_manager: MagicMock, MockFunction: MagicMock, mock_resolve_group_id: MagicMock,
+                              random_string, foo_callable, args, kwargs):
+    return_value = pyoverload(random_string)(foo_callable)
 
-    new_foo = pyoverload(random_string)(_foo)
-    MockFunctionContext.assert_called_once_with(_foo)
-    MockFunction.assert_called_once_with(MockFunctionContext.return_value)
-    mock_manager.register_to_group.assert_called_once_with(random_string, MockFunction.return_value)
-
-    return_value = new_foo(*args, **kwargs)
-
-    mock_manager.retrieve_from_group.assert_called_once_with(random_string, *args, **kwargs)
-    mock_manager.retrieve_from_group.return_value.assert_called_once_with(*args, **kwargs)
-    assert return_value == mock_manager.retrieve_from_group.return_value.return_value
+    MockFunction.from_callable.assert_called_once_with(foo_callable)
+    mock_resolve_group_id.assert_called_once_with(random_string, MockFunction.from_callable.return_value)
+    mock_manager.get_group.assert_called_once_with(mock_resolve_group_id.return_value)
+    mock_manager.get_group.return_value.wraps.assert_called_once_with(MockFunction.from_callable.return_value)
+    assert return_value == mock_manager.get_group.return_value.wraps.return_value
 
 
-@patch('pyloadover.pyloadover.FunctionContext', spec_set=True)
-@patch('pyloadover.pyloadover.Function', spec_set=True)
-@patch('pyloadover.pyloadover.manager', spec_set=True)
-def test_pyoverload_without_group(mock_manager: MagicMock, MockFunction: MagicMock, MockFunctionContext: MagicMock,
-                                  args, kwargs):
-    def _foo(*a, **b):
-        return a, b
+def test_group_decorator_on_function(clear_manager, random_string):
+    random_group = get_group(random_string)
 
-    new_foo = pyoverload()(_foo)
-    MockFunctionContext.assert_called_once_with(_foo)
-    MockFunction.assert_called_once_with(MockFunctionContext.return_value)
-    mock_manager.register_to_group.assert_called_once_with(MockFunction.return_value.id, MockFunction.return_value)
-
-    return_value = new_foo(*args, **kwargs)
-
-    mock_manager.retrieve_from_group.assert_called_once_with(MockFunction.return_value.id, *args, **kwargs)
-    mock_manager.retrieve_from_group.return_value.assert_called_once_with(*args, **kwargs)
-    assert return_value == mock_manager.retrieve_from_group.return_value.return_value
-
-
-def test_loadover_on_function(clear_manager):
-    @loadover
+    @random_group
     def foo(x: int):
         return x
 
-    @loadover
+    @random_group
+    def bar(x: int, y: str):
+        return x, y
+
+    assert random_group.call_matching_function(1) == 1
+    assert random_group.call_matching_function(1, "2") == (1, "2")
+
+
+def test_overload_on_function(clear_manager):
+    @overload
+    def foo(x: int):
+        return x
+
+    @overload
     def foo(x: int, y: str):
         return x, y
 
-    @loadover
+    @overload
     def bar(x: int):
         return x
 
@@ -61,17 +97,17 @@ def test_loadover_on_function(clear_manager):
     assert bar(3) == 3
 
 
-def test_loadover_on_method(clear_manager):
+def test_overload_on_method(clear_manager):
     class Foo:
-        @loadover
+        @overload
         def foo(self, x: int):
             return x
 
-        @loadover
+        @overload
         def foo(self, x: int, y: str):
             return x, y
 
-        @loadover
+        @overload
         def bar(self, x: int):
             return x
 
@@ -81,20 +117,20 @@ def test_loadover_on_method(clear_manager):
     assert instance.bar(3) == 3
 
 
-def test_loadover_on_static_method(clear_manager):
+def test_overload_on_static_method(clear_manager):
     class Foo:
         @staticmethod
-        @loadover
+        @overload
         def foo(x: int):
             return x
 
         @staticmethod
-        @loadover
+        @overload
         def foo(x: int, y: str):
             return x, y
 
         @staticmethod
-        @loadover
+        @overload
         def bar(x: int):
             return x
 
@@ -103,20 +139,20 @@ def test_loadover_on_static_method(clear_manager):
     assert Foo.bar(3) == 3
 
 
-def test_loadover_on_class_method(clear_manager):
+def test_overload_on_class_method(clear_manager):
     class Foo:
         @classmethod
-        @loadover
+        @overload
         def foo(cls, x: int):
             return x
 
         @classmethod
-        @loadover
+        @overload
         def foo(cls, x: int, y: str):
             return x, y
 
         @classmethod
-        @loadover
+        @overload
         def bar(cls, x: int):
             return x
 

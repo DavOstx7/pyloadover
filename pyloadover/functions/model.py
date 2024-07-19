@@ -1,5 +1,5 @@
 import inspect
-from typing import Optional
+from typing import Optional, Callable, Any
 from pyloadover.config import CONFIG, ConfigReloadable
 from pyloadover.functions.generators import FunctionIdGenerator, FunctionContext
 from pyloadover.utils import is_instance
@@ -10,6 +10,10 @@ class Function(ConfigReloadable):
         self._context = context
         self.id_generator = CONFIG["function_id_generator"] if id_generator is None else id_generator
 
+    @classmethod
+    def from_callable(cls, f: Callable[[...], Any], id_generator: Optional[FunctionIdGenerator] = None):
+        return cls(FunctionContext(f), id_generator=id_generator)
+
     @property
     def id(self) -> str:
         return self.id_generator.generate_id(self._context)
@@ -17,6 +21,10 @@ class Function(ConfigReloadable):
     @property
     def context(self) -> FunctionContext:
         return self._context
+
+    @property
+    def object(self) -> Callable[[...], Any]:
+        return self._context.object
 
     @property
     def name(self) -> str:
@@ -29,7 +37,7 @@ class Function(ConfigReloadable):
     def reload_from_config(self):
         self.id_generator = CONFIG["function_id_generator"]
 
-    def do_arguments_match(self, *args, **kwargs) -> bool:
+    def do_arguments_match_signature(self, *args, **kwargs) -> bool:
         try:
             bound_args = self.signature.bind(*args, **kwargs)
             bound_args.apply_defaults()
@@ -46,4 +54,4 @@ class Function(ConfigReloadable):
             return False
 
     def __call__(self, *args, **kwargs):
-        return self._context.object(*args, **kwargs)
+        return self.object(*args, **kwargs)
