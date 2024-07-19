@@ -37,7 +37,7 @@ class Function(ConfigReloadable):
     def reload_from_config(self):
         self.id_generator = CONFIG["function_id_generator"]
 
-    def do_arguments_match(self, *args, **kwargs) -> bool:
+    def do_args_match_signature(self, *args, **kwargs) -> bool:
         try:
             bound_args = self.signature.bind(*args, **kwargs)
             bound_args.apply_defaults()

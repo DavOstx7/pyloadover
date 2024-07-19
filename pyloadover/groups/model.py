@@ -12,8 +12,8 @@ class Group(ConfigReloadable):
         self.validators = CONFIG["group_validators"] if validators is None else validators
 
     @classmethod
-    def from_id(cls, _id: str, validators: Optional[List[GroupFunctionValidator]] = None):
-        return cls(GroupContext(_id), validators=validators)
+    def from_group_id(cls, group_id: str, validators: Optional[List[GroupFunctionValidator]] = None):
+        return cls(GroupContext(group_id), validators=validators)
 
     @property
     def context(self) -> GroupContext:
@@ -50,11 +50,11 @@ class Group(ConfigReloadable):
         for validator in self.validators:
             validator.validate(self._context, function)
 
-    def find_functions_by_arguments(self, *args, **kwargs) -> List[Function]:
-        return [function for function in self.functions if function.do_arguments_match(*args, **kwargs)]
+    def retrieve_functions_by_args(self, *args, **kwargs) -> List[Function]:
+        return [function for function in self.functions if function.do_args_match_signature(*args, **kwargs)]
 
-    def retrieve_function_by_arguments(self, *args, **kwargs) -> Function:
-        matches = self.find_functions_by_arguments(*args, **kwargs)
+    def retrieve_one_function_by_args(self, *args, **kwargs) -> Function:
+        matches = self.retrieve_functions_by_args(*args, **kwargs)
 
         if not matches:
             raise NoMatchFoundError(
@@ -68,7 +68,7 @@ class Group(ConfigReloadable):
         return matches[0]
 
     def call_function(self, *args, **kwargs) -> Any:
-        retrieved_function = self.retrieve_function_by_arguments(*args, **kwargs)
+        retrieved_function = self.retrieve_one_function_by_args(*args, **kwargs)
         return retrieved_function(*args, **kwargs)
 
     def wraps(self, function: Function) -> Callable[[...], Any]:
@@ -76,7 +76,7 @@ class Group(ConfigReloadable):
 
         @functools.wraps(function.object)
         def wrapper(*args, **kwargs):
-            retrieved_function = self.retrieve_function_by_arguments(*args, **kwargs)
+            retrieved_function = self.retrieve_one_function_by_args(*args, **kwargs)
             return retrieved_function(*args, **kwargs)
 
         return wrapper
