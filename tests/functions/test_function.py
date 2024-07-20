@@ -21,13 +21,13 @@ def test_function_reload_from_config(mock_function_context, mock_function_id_gen
     assert function.id_generator == CONFIG["function_id_generator"]
 
 
-def _foo(a: int, b: str, c: bool = True):
-    return a, b, c
+def _dummy_foo(a: int, b: str, c: bool = True):
+    pass
 
 
 @pytest.mark.parametrize("f, args,  kwargs", [
-    (_foo, (1, "2"), {"c": True}),
-    (_foo, (1, "2"), {})
+    (_dummy_foo, (1, "2"), {"c": True}),
+    (_dummy_foo, (1, "2"), {})
 ])
 def test_function_arguments_do_match_signature(f, args, kwargs):
     context = FunctionContext(f)
@@ -35,12 +35,28 @@ def test_function_arguments_do_match_signature(f, args, kwargs):
 
 
 @pytest.mark.parametrize("f, args,  kwargs", [
-    (_foo, (), {}),
-    (_foo, (1,), {}),
-    (_foo, (1, 2), {"c": True}),
-    (_foo, (1, "2"), {"c": 3}),
-    (_foo, (1, "2"), {"c": True, "d": False}),
+    (_dummy_foo, (), {}),
+    (_dummy_foo, (1,), {}),
+    (_dummy_foo, (1, 2), {"c": True}),
+    (_dummy_foo, (1, "2"), {"c": 3}),
+    (_dummy_foo, (1, "2"), {"c": True, "d": False}),
 ])
 def test_function_arguments_do_not_match_signature(f, args, kwargs):
     context = FunctionContext(f)
     assert not Function(context).do_arguments_match_signature(*args, **kwargs)
+
+
+def test_function_call_underlying_callable_exists(mock_function_context, mock_callable, args, kwargs):
+    mock_function_context.underlying_callable = mock_callable
+
+    Function(mock_function_context)(*args, **kwargs)
+
+    mock_callable.assert_called_once_with(*args, **kwargs)
+
+
+def test_function_call_underlying_callable_not_exists(mock_function_context, args, kwargs):
+    mock_function_context.underlying_callable = None
+
+    Function(mock_function_context)(*args, **kwargs)
+
+    mock_function_context.callable.assert_called_once_with(*args, **kwargs)
