@@ -42,6 +42,16 @@ def kwargs(args) -> dict:
 
 
 @pytest.fixture
+def mock_callable() -> MagicMock:
+    mock = MagicMock()
+    mock.__name__ = "a"
+    mock.__qualname__ = "b"
+    mock.__module__ = "c"
+
+    return mock
+
+
+@pytest.fixture
 def mock_object() -> MagicMock:
     return MagicMock()
 

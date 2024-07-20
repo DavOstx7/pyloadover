@@ -23,8 +23,8 @@ class Function(ConfigReloadable):
         return self._context
 
     @property
-    def object(self) -> Callable[[...], Any]:
-        return self._context.object
+    def callable(self) -> Callable[[...], Any]:
+        return self._context.callable
 
     @property
     def name(self) -> str:
@@ -54,4 +54,4 @@ class Function(ConfigReloadable):
             return False
 
     def __call__(self, *args, **kwargs):
-        return self.object(*args, **kwargs)
+        return self.callable(*args, **kwargs)

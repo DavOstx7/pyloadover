@@ -74,7 +74,7 @@ class Group(ConfigReloadable):
     def wraps(self, function: Function) -> Callable[[...], Any]:
         self.register_function(function)
 
-        @functools.wraps(function.object)
+        @functools.wraps(function.callable)
         def wrapper(*args, **kwargs):
             return self.call_function_by_arguments(*args, **kwargs)
 
