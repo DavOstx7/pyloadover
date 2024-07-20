@@ -119,8 +119,8 @@ def test_overload_on_method(clear_manager):
 
 def test_overload_on_static_method(clear_manager):
     class Foo:
-        @staticmethod
         @overload
+        @staticmethod
         def foo(x: int):
             return x
 
@@ -141,8 +141,8 @@ def test_overload_on_static_method(clear_manager):
 
 def test_overload_on_class_method(clear_manager):
     class Foo:
-        @classmethod
         @overload
+        @classmethod
         def foo(cls, x: int):
             return x
 
