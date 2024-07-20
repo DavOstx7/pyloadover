@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 from pyloadover.functions.function import Function, FunctionContext, CONFIG
 
@@ -46,17 +46,19 @@ def test_function_arguments_do_not_match_signature(f, args, kwargs):
     assert not Function(context).do_arguments_match_signature(*args, **kwargs)
 
 
-def test_function_call_underlying_callable_exists(mock_function_context, mock_callable, args, kwargs):
-    mock_function_context.underlying_callable = mock_callable
+def test_function_call_underlying_callable_exists(mock_function_context, args, kwargs):
+    mock_function_context.underlying_callable = MagicMock()
 
-    Function(mock_function_context)(*args, **kwargs)
+    return_value = Function(mock_function_context)(*args, **kwargs)
 
-    mock_callable.assert_called_once_with(*args, **kwargs)
+    mock_function_context.underlying_callable.assert_called_once_with(*args, **kwargs)
+    assert return_value == mock_function_context.underlying_callable.return_value
 
 
 def test_function_call_underlying_callable_not_exists(mock_function_context, args, kwargs):
     mock_function_context.underlying_callable = None
 
-    Function(mock_function_context)(*args, **kwargs)
+    return_value = Function(mock_function_context)(*args, **kwargs)
 
     mock_function_context.callable.assert_called_once_with(*args, **kwargs)
+    assert return_value == mock_function_context.callable.return_value
