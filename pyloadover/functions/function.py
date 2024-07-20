@@ -27,10 +27,6 @@ class Function(ConfigReloadable):
         return self._context.callable
 
     @property
-    def name(self) -> str:
-        return self._context.name
-
-    @property
     def signature(self) -> inspect.Signature:
         return self._context.signature
 
