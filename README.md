@@ -115,11 +115,11 @@ print(function_group.find_single_function_by_arguments("Foo", "IDK", "Bar")("Foo
 ```
 
 ```bash
-[1] Calling function("Foo"):
+[1] Calling function with params ("Foo"):
 Hello Foo!
-[2] Calling function("Foo", "Bar"):
+[2] Calling function with params ("Foo", "Bar"):
 Hello Foo, your last name is Bar!
-[3] Calling function("Foo", "IDK", "Bar"):
+[3] Calling function with params ("Foo", "IDK", "Bar"):
 Hello Foo, your middle name is IDK, and your last name is Bar!
 ```
 
