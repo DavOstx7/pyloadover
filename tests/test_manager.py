@@ -28,6 +28,6 @@ def test_manager_get_new_group(MockGroup: MagicMock, random_string):
 
     return_value = manager.get_group(random_string)
 
-    MockGroup.from_group_id.assert_called_once_with(random_string)
-    assert manager._id_to_group[random_string] == MockGroup.from_group_id.return_value
-    assert return_value == MockGroup.from_group_id.return_value
+    MockGroup.from_id.assert_called_once_with(random_string)
+    assert manager._id_to_group[random_string] == MockGroup.from_id.return_value
+    assert return_value == MockGroup.from_id.return_value

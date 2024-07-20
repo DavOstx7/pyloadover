@@ -12,7 +12,7 @@ class Group(ConfigReloadable):
         self.validators = CONFIG["group_function_validators"] if validators is None else validators
 
     @classmethod
-    def from_group_id(cls, group_id: str, validators: Optional[List[GroupFunctionValidator]] = None):
+    def from_id(cls, group_id: str, validators: Optional[List[GroupFunctionValidator]] = None):
         return cls(GroupContext(group_id), validators=validators)
 
     @property

@@ -62,7 +62,7 @@ def test_group_validate_function(mock_group_context, mock_group_validators, mock
 
 
 def test_group_find_functions_by_arguments():
-    group = Group.from_group_id("_foo")
+    group = Group.from_id("_foo")
 
     def _foo():
         pass
@@ -89,7 +89,7 @@ def test_group_find_functions_by_arguments():
 
 
 def test_group_find_single_function_by_arguments():
-    group = Group.from_group_id("_foo")
+    group = Group.from_id("_foo")
 
     def _foo():
         pass
@@ -115,7 +115,7 @@ def test_group_find_single_function_by_arguments():
 
 
 def test_group_find_single_function_by_arguments_no_matches():
-    group = Group.from_group_id("_foo")
+    group = Group.from_id("_foo")
 
     def _foo(a: int, b: str, c: bool = True):
         pass
@@ -128,7 +128,7 @@ def test_group_find_single_function_by_arguments_no_matches():
 
 
 def test_group_find_single_function_by_arguments_multiple_matches():
-    group = Group.from_group_id("_foo")
+    group = Group.from_id("_foo")
 
     def _foo():
         pass
