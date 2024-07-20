@@ -43,12 +43,12 @@ def test_group_register_function(mock_validate_function: MagicMock, mock_group_c
 @patch.object(Group, 'validate_function')
 def test_group_validate(mock_validate_function: MagicMock, mock_group_context, mock_functions):
     mock_group_context.functions = mock_functions
-    expected_calls = len(mock_functions)
     group = Group(mock_group_context)
+    expected_call_count = len(mock_functions)
 
     group.validate()
 
-    assert mock_validate_function.call_count == expected_calls
+    assert mock_validate_function.call_count == expected_call_count
     mock_validate_function.assert_has_calls([call(mock_function) for mock_function in mock_functions])
 
 
@@ -61,7 +61,7 @@ def test_group_validate_function(mock_group_context, mock_group_validators, mock
         mock_validator.validate_function.assert_called_once_with(mock_group_context, mock_function)
 
 
-def test_find_functions_by_arguments():
+def test_group_find_functions_by_arguments():
     group = Group.from_group_id("_foo")
 
     def _foo():
@@ -88,7 +88,7 @@ def test_find_functions_by_arguments():
     assert group.find_functions_by_arguments(False, False, False) == []
 
 
-def test_find_single_function_by_arguments():
+def test_group_find_single_function_by_arguments():
     group = Group.from_group_id("_foo")
 
     def _foo():
@@ -114,7 +114,7 @@ def test_find_single_function_by_arguments():
     assert group.find_single_function_by_arguments(1, "2", True) == function3
 
 
-def test_find_single_function_by_arguments_no_matches():
+def test_group_find_single_function_by_arguments_no_matches():
     group = Group.from_group_id("_foo")
 
     def _foo(a: int, b: str, c: bool = True):
@@ -127,7 +127,7 @@ def test_find_single_function_by_arguments_no_matches():
         group.find_single_function_by_arguments()
 
 
-def test_find_single_function_by_arguments_multiple_matches():
+def test_group_find_single_function_by_arguments_multiple_matches():
     group = Group.from_group_id("_foo")
 
     def _foo():
@@ -147,8 +147,8 @@ def test_find_single_function_by_arguments_multiple_matches():
 
 
 @patch.object(Group, 'find_single_function_by_arguments')
-def test_group_call_matching_function(mock_find_single_function_by_arguments: MagicMock, mock_group_context, args,
-                                      kwargs):
+def test_group_call_function_by_arguments(mock_find_single_function_by_arguments: MagicMock, mock_group_context,
+                                          args, kwargs):
     group = Group(mock_group_context)
 
     return_value = group.call_function_by_arguments(*args, **kwargs)
@@ -160,7 +160,7 @@ def test_group_call_matching_function(mock_find_single_function_by_arguments: Ma
 
 @patch('pyloadover.groups.group.Function', autospec=True)
 @patch.object(Group, 'wraps')
-def test_group_as_decorator(mock_wraps: MagicMock, MockFunction: MagicMock, mock_group_context):
+def test_group_decorator(mock_wraps: MagicMock, MockFunction: MagicMock, mock_group_context):
     group = Group(mock_group_context)
 
     def _foo():

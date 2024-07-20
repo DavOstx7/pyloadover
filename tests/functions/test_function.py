@@ -7,7 +7,7 @@ from pyloadover.functions.function import Function, FunctionContext, CONFIG
 def test_function_id(mock_function_context, mock_function_id_generator):
     return_value = Function(mock_function_context, id_generator=mock_function_id_generator).id
 
-    mock_function_id_generator.generate_id.asser_called_once_with(mock_function_context)
+    mock_function_id_generator.generate_id.assert_called_once_with(mock_function_context)
     assert return_value == mock_function_id_generator.generate_id.return_value
 
 

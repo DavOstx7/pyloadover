@@ -6,14 +6,14 @@ from pyloadover.pyloadover import Function
 
 @patch('pyloadover.pyloadover.set_if_value_exists')
 def test_basic_config(mock_set_if_value_exists: MagicMock, mock_function_id_generator, mock_group_validators):
-    expected_calls = 2
+    expected_call_count = 2
 
     basic_config(
         function_id_generator=mock_function_id_generator,
         group_function_validators=mock_group_validators
     )
 
-    assert mock_set_if_value_exists.call_count == expected_calls
+    assert mock_set_if_value_exists.call_count == expected_call_count
     mock_set_if_value_exists.assert_has_calls(
         [
             call("function_id_generator", mock_function_id_generator),
