@@ -1,6 +1,7 @@
 # pyloadover
 
-Repository for developing and maintaining the code for pyloadover
+pyloadover is a python package which allows you to overload your functions in different ways.
+It supports a lot of additional features, which you are more than welcome to discover yourself :)
 
 ## Installation
 

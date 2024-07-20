@@ -23,12 +23,8 @@ class Function(ConfigReloadable):
         return self._context
 
     @property
-    def object(self) -> Callable[[...], Any]:
-        return self._context.object
-
-    @property
-    def name(self) -> str:
-        return self._context.name
+    def callable(self) -> Callable[[...], Any]:
+        return self._context.callable
 
     @property
     def signature(self) -> inspect.Signature:
@@ -53,5 +49,8 @@ class Function(ConfigReloadable):
         except (TypeError, ValueError):
             return False
 
-    def __call__(self, *args, **kwargs):
-        return self.object(*args, **kwargs)
+    def __call__(self, *args, **kwargs) -> Any:
+        if self._context.underlying_callable:
+            return self._context.underlying_callable(*args, **kwargs)
+
+        return self.callable(*args, **kwargs)
