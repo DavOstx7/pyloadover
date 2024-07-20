@@ -9,7 +9,7 @@ class Manager(ConfigReloadable):
 
     @property
     def id_to_group(self) -> Dict[str, Group]:
-        # shallow copy (sub objects are modifiable)
+        # Shallow copying means the values themselves (objects) are modifiable
         return self._id_to_group.copy()
 
     def reload_from_config(self):
