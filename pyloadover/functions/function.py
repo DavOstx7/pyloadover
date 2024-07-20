@@ -49,5 +49,8 @@ class Function(ConfigReloadable):
         except (TypeError, ValueError):
             return False
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, *args, **kwargs) -> Any:
+        if self._context.underlying_callable:
+            return self._context.underlying_callable(*args, **kwargs)
+
         return self.callable(*args, **kwargs)
