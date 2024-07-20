@@ -1,8 +1,8 @@
 import pytest
 from unittest.mock import patch, call, MagicMock
 
-from pyloadover.groups.group import Group, GroupContext, CONFIG
-from pyloadover.functions.function import Function, FunctionContext
+from pyloadover.groups.group import Group, CONFIG
+from pyloadover.functions.function import Function
 from pyloadover.exceptions import NoMatchFoundError, MultipleMatchesFoundError
 
 
@@ -62,24 +62,24 @@ def test_group_validate_function(mock_group_context, mock_group_validators, mock
 
 
 def test_find_functions_by_arguments():
-    group = Group(GroupContext("_foo"))
+    group = Group.from_group_id("_foo")
 
     def _foo():
         pass
 
-    function1 = Function(FunctionContext(_foo))
+    function1 = Function.from_callable(_foo)
     group.register_function(function1)
 
     def _foo(a: bool):
         pass
 
-    function2 = Function(FunctionContext(_foo))
+    function2 = Function.from_callable(_foo)
     group.register_function(function2)
 
     def _foo(a: int, b: str, c: bool = True):
         pass
 
-    function3 = Function(FunctionContext(_foo))
+    function3 = Function.from_callable(_foo)
     group.register_function(function3)
 
     assert group.find_functions_by_arguments() == [function1]
@@ -89,24 +89,24 @@ def test_find_functions_by_arguments():
 
 
 def test_find_single_function_by_arguments():
-    group = Group(GroupContext("_foo"))
+    group = Group.from_group_id("_foo")
 
     def _foo():
         pass
 
-    function1 = Function(FunctionContext(_foo))
+    function1 = Function.from_callable(_foo)
     group.register_function(function1)
 
     def _foo(a: bool):
         pass
 
-    function2 = Function(FunctionContext(_foo))
+    function2 = Function.from_callable(_foo)
     group.register_function(function2)
 
     def _foo(a: int, b: str, c: bool = True):
         pass
 
-    function3 = Function(FunctionContext(_foo))
+    function3 = Function.from_callable(_foo)
     group.register_function(function3)
 
     assert group.find_single_function_by_arguments() == function1
@@ -115,12 +115,12 @@ def test_find_single_function_by_arguments():
 
 
 def test_find_single_function_by_arguments_no_matches():
-    group = Group(GroupContext("_foo"))
+    group = Group.from_group_id("_foo")
 
     def _foo(a: int, b: str, c: bool = True):
         pass
 
-    function = Function(FunctionContext(_foo))
+    function = Function.from_callable(_foo)
     group.register_function(function)
 
     with pytest.raises(NoMatchFoundError):
@@ -128,18 +128,18 @@ def test_find_single_function_by_arguments_no_matches():
 
 
 def test_find_single_function_by_arguments_multiple_matches():
-    group = Group(GroupContext("_foo"))
+    group = Group.from_group_id("_foo")
 
     def _foo():
         pass
 
-    function = Function(FunctionContext(_foo))
+    function = Function.from_callable(_foo)
     group.register_function(function)
 
     def _foo(*a, **b):
         pass
 
-    function = Function(FunctionContext(_foo))
+    function = Function.from_callable(_foo)
     group.register_function(function)
 
     with pytest.raises(MultipleMatchesFoundError):
