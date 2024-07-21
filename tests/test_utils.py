@@ -13,7 +13,7 @@ from pyloadover.utils import is_instance, get_underlying_callable
     ({1: 1, 2: 2}, dict),
     ({"1": "2", "2": "2"}, Dict[str, str])
 ])
-def test_utils_is_instance(value, annotation):
+def test_is_instance_returns_true(value, annotation):
     assert is_instance(value, annotation)
 
 
@@ -25,7 +25,7 @@ def test_utils_is_instance(value, annotation):
     ({1: 1, 2: 2}, list),
     ({"1": "2", "2": "2"}, List[str])
 ])
-def test_utils_is_not_instance(value, annotation):
+def test_is_instance_returns_false(value, annotation):
     assert not is_instance(value, annotation)
 
 
@@ -37,7 +37,7 @@ def _dummy_decorator(func):
     return _dummy_wrapper
 
 
-def test_utils_get_underlying_callable_exists():
+def test_get_underlying_callable():
     def _foo():
         pass
 
@@ -52,5 +52,13 @@ def test_utils_get_underlying_callable_exists():
     assert _Foo._foo == get_underlying_callable(_dummy_decorator(staticmethod(classmethod(_Foo._foo))))
 
 
-def test_utils_get_underlying_callable_not_exists(foo_callable):
-    assert get_underlying_callable(foo_callable) is None
+def test_get_underlying_callable_returns_none(foo_callable):
+    def _foo():
+        pass
+
+    class _Foo:
+        def _foo(self):
+            pass
+
+    assert get_underlying_callable(_foo) is None
+    assert get_underlying_callable(_Foo._foo) is None

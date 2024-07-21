@@ -3,7 +3,7 @@ from unittest.mock import patch, MagicMock
 from pyloadover.manager import Manager
 
 
-def test_manager_reload_from_config(mock_id_to_group):
+def test_reload_from_config(mock_id_to_group):
     manager = Manager()
     manager._id_to_group = mock_id_to_group
 
@@ -13,7 +13,7 @@ def test_manager_reload_from_config(mock_id_to_group):
         mock_group.reload_from_config.assert_called_once_with()
 
 
-def test_manager_get_existing_group(mock_group, random_string):
+def test_get_group_when_group_exists(mock_group, random_string):
     manager = Manager()
     manager._id_to_group[random_string] = mock_group
 
@@ -23,7 +23,7 @@ def test_manager_get_existing_group(mock_group, random_string):
 
 
 @patch('pyloadover.manager.Group')
-def test_manager_get_new_group(MockGroup: MagicMock, random_string):
+def test_get_group_when_group_not_exists(MockGroup: MagicMock, random_string):
     manager = Manager()
 
     return_value = manager.get_group(random_string)

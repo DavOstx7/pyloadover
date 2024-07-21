@@ -42,11 +42,24 @@ def kwargs(args) -> dict:
 
 
 @pytest.fixture
-def mock_callable() -> MagicMock:
+def mock_underlying_callable(random_string) -> MagicMock:
     mock = MagicMock()
-    mock.__name__ = "a"
-    mock.__qualname__ = "b"
-    mock.__module__ = "c"
+    mock.__name__ = random_string[:1]
+    mock.__qualname__ = random_string[:2]
+    mock.__module__ = random_string[:3]
+
+    return mock
+
+
+@pytest.fixture
+def mock_callable(mock_underlying_callable, random_string) -> MagicMock:
+    mock = MagicMock()
+    mock.__name__ = random_string[:1]
+    mock.__qualname__ = random_string[:2]
+    mock.__module__ = random_string[:3]
+
+    if random.choice([True, False]):
+        mock.__wrapped__ = mock_underlying_callable
 
     return mock
 
