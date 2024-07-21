@@ -4,15 +4,16 @@ from unittest.mock import patch
 from pyloadover.functions.function import Function, FunctionContext, CONFIG
 
 
-def test_id_generator_assigned_to_param(mock_function_context, mock_function_id_generator):
+def test_id_generator_attribute_assigned_to_param(mock_function_context, mock_function_id_generator):
     function = Function(mock_function_context, mock_function_id_generator)
 
     assert function.id_generator == mock_function_id_generator
 
 
 @patch.dict('pyloadover.functions.function.CONFIG', {}, clear=True)
-def test_id_generator_assigned_from_config(mock_function_context, mock_function_id_generator):
+def test_id_generator_attribute_assigned_from_config(mock_function_context, mock_function_id_generator):
     CONFIG["function_id_generator"] = mock_function_id_generator
+
     function = Function(mock_function_context)
 
     assert function.id_generator == mock_function_id_generator
