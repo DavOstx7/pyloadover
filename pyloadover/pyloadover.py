@@ -23,7 +23,7 @@ def resolve_group_id(group_id: Optional[str], function: Function):
     return function.id if group_id is None else group_id
 
 
-def pyoverload(group_id: str = None):
+def pyoverload(group_id: Optional[str] = None):
     def decorator(f: Callable[[...], Any]):
         function = Function.from_callable(f)
         group = manager.get_group(resolve_group_id(group_id, function))

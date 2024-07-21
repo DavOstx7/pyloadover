@@ -7,7 +7,7 @@ from pyloadover.exceptions import NoMatchFoundError, MultipleMatchesFoundError
 
 
 @patch.dict('pyloadover.groups.group.CONFIG', {}, clear=True)
-def test_group_reload_from_config(mock_group_context, mock_group_validators, mock_functions):
+def test_reload_from_config(mock_group_context, mock_group_validators, mock_functions):
     CONFIG["group_function_validators"] = mock_group_validators
     mock_group_context.functions = mock_functions
     group = Group(mock_group_context)
@@ -19,7 +19,7 @@ def test_group_reload_from_config(mock_group_context, mock_group_validators, moc
         mock_function.reload_from_config.assert_called_once_with()
 
 
-def test_group_clear(random_int, mock_group_context, mock_group_validators, mock_functions):
+def test_clear(random_int, mock_group_context, mock_group_validators, mock_functions):
     mock_group_context.functions = mock_functions
     group = Group(mock_group_context, mock_group_validators)
 
@@ -30,7 +30,7 @@ def test_group_clear(random_int, mock_group_context, mock_group_validators, mock
 
 
 @patch.object(Group, 'validate_function')
-def test_group_register_function(mock_validate_function: MagicMock, mock_group_context, mock_function):
+def test_register_function(mock_validate_function: MagicMock, mock_group_context, mock_function):
     mock_group_context.functions = []
     group = Group(mock_group_context)
 
@@ -41,7 +41,7 @@ def test_group_register_function(mock_validate_function: MagicMock, mock_group_c
 
 
 @patch.object(Group, 'validate_function')
-def test_group_validate(mock_validate_function: MagicMock, mock_group_context, mock_functions):
+def test_validate(mock_validate_function: MagicMock, mock_group_context, mock_functions):
     mock_group_context.functions = mock_functions
     group = Group(mock_group_context)
     expected_call_count = len(mock_functions)
@@ -52,7 +52,7 @@ def test_group_validate(mock_validate_function: MagicMock, mock_group_context, m
     mock_validate_function.assert_has_calls([call(mock_function) for mock_function in mock_functions])
 
 
-def test_group_validate_function(mock_group_context, mock_group_validators, mock_function):
+def test_validate_function(mock_group_context, mock_group_validators, mock_function):
     group = Group(mock_group_context, mock_group_validators)
 
     group.validate_function(mock_function)
@@ -61,7 +61,7 @@ def test_group_validate_function(mock_group_context, mock_group_validators, mock
         mock_validator.validate_function.assert_called_once_with(mock_group_context, mock_function)
 
 
-def test_group_find_functions_by_arguments():
+def test_find_functions_by_arguments():
     group = Group.from_id("_foo")
 
     def _foo():
@@ -88,7 +88,7 @@ def test_group_find_functions_by_arguments():
     assert group.find_functions_by_arguments(False, False, False) == []
 
 
-def test_group_find_single_function_by_arguments():
+def test_find_single_function_by_arguments():
     group = Group.from_id("_foo")
 
     def _foo():
@@ -114,7 +114,7 @@ def test_group_find_single_function_by_arguments():
     assert group.find_single_function_by_arguments(1, "2", True) == function3
 
 
-def test_group_find_single_function_by_arguments_no_matches():
+def test_find_single_function_by_arguments_raises_no_match():
     group = Group.from_id("_foo")
 
     def _foo(a: int, b: str, c: bool = True):
@@ -127,7 +127,7 @@ def test_group_find_single_function_by_arguments_no_matches():
         group.find_single_function_by_arguments()
 
 
-def test_group_find_single_function_by_arguments_multiple_matches():
+def test_find_single_function_by_arguments_raises_multiple_matches():
     group = Group.from_id("_foo")
 
     def _foo():
@@ -147,8 +147,8 @@ def test_group_find_single_function_by_arguments_multiple_matches():
 
 
 @patch.object(Group, 'find_single_function_by_arguments')
-def test_group_call_function_by_arguments(mock_find_single_function_by_arguments: MagicMock, mock_group_context,
-                                          args, kwargs):
+def test_call_function_by_arguments(mock_find_single_function_by_arguments: MagicMock, mock_group_context,
+                                    args, kwargs):
     group = Group(mock_group_context)
 
     return_value = group.call_function_by_arguments(*args, **kwargs)
@@ -160,7 +160,7 @@ def test_group_call_function_by_arguments(mock_find_single_function_by_arguments
 
 @patch('pyloadover.groups.group.Function', autospec=True)
 @patch.object(Group, 'wraps')
-def test_group_decorator(mock_wraps: MagicMock, MockFunction: MagicMock, mock_group_context):
+def test_group_call_wraps_callable(mock_wraps: MagicMock, MockFunction: MagicMock, mock_group_context):
     group = Group(mock_group_context)
 
     def _foo():

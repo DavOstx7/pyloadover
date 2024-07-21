@@ -30,8 +30,8 @@ def test_basic_config_with_propagate(mock_manager: MagicMock):
 
 @patch('pyloadover.pyloadover.manager', spec_set=True)
 def test_basic_config_without_propagate(mock_manager: MagicMock):
-    basic_config(propagate=True)
-    mock_manager.reload_from_config.assert_called_once_with()
+    basic_config(propagate=False)
+    mock_manager.reload_from_config.assert_not_called()
 
 
 @patch('pyloadover.pyloadover.manager', spec_set=True)
@@ -43,18 +43,24 @@ def test_get_group(mock_manager: MagicMock, random_string):
 
 
 def test_resolve_group_id_with_group_id(foo_callable, random_string):
-    assert random_string == resolve_group_id(random_string, Function.from_callable(foo_callable))
+    group_id = random_string
+    function = Function.from_callable(foo_callable)
+
+    assert group_id == resolve_group_id(group_id, function)
 
 
 def test_resolve_group_id_without_group_id(foo_callable):
-    assert "foo" == resolve_group_id(None, Function.from_callable(foo_callable))
+    group_id = None
+    function = Function.from_callable(foo_callable)
+
+    assert function.id == resolve_group_id(group_id, function)
 
 
 @patch('pyloadover.pyloadover.resolve_group_id', spec_set=True)
 @patch('pyloadover.pyloadover.Function', spec_set=True)
 @patch('pyloadover.pyloadover.manager', spec_set=True)
-def test_pyoverload_decorator(mock_manager: MagicMock, MockFunction: MagicMock, mock_resolve_group_id: MagicMock,
-                              random_string, foo_callable, args, kwargs):
+def test_pyoverload(mock_manager: MagicMock, MockFunction: MagicMock, mock_resolve_group_id: MagicMock,
+                    random_string, foo_callable, args, kwargs):
     return_value = pyoverload(random_string)(foo_callable)
 
     MockFunction.from_callable.assert_called_once_with(foo_callable)
@@ -79,7 +85,7 @@ def test_group_decorator_on_function(clear_manager, random_string):
     assert random_group.call_function_by_arguments(1, "2") == (1, "2")
 
 
-def test_overload_on_function(clear_manager):
+def test_overload_decorator_on_function(clear_manager):
     @overload
     def foo(x: int):
         return x
@@ -97,7 +103,7 @@ def test_overload_on_function(clear_manager):
     assert bar(3) == 3
 
 
-def test_overload_on_method(clear_manager):
+def test_overload_decorator_on_method(clear_manager):
     class Foo:
         @overload
         def foo(self, x: int):
@@ -117,7 +123,7 @@ def test_overload_on_method(clear_manager):
     assert instance.bar(3) == 3
 
 
-def test_overload_on_static_method(clear_manager):
+def test_overload_decorator_on_static_method(clear_manager):
     class Foo:
         @overload
         @staticmethod
@@ -139,7 +145,7 @@ def test_overload_on_static_method(clear_manager):
     assert Foo.bar(3) == 3
 
 
-def test_overload_on_class_method(clear_manager):
+def test_overload_decorator_on_class_method(clear_manager):
     class Foo:
         @overload
         @classmethod
