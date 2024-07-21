@@ -23,13 +23,13 @@ def test_basic_config(mock_set_if_value_exists: MagicMock, mock_function_id_gene
 
 
 @patch('pyloadover.pyloadover.manager', spec_set=True)
-def test_basic_config_propagate(mock_manager: MagicMock):
+def test_basic_config_with_propagate(mock_manager: MagicMock):
     basic_config(propagate=True)
     mock_manager.reload_from_config.assert_called_once_with()
 
 
 @patch('pyloadover.pyloadover.manager', spec_set=True)
-def test_basic_config_not_propagate(mock_manager: MagicMock):
+def test_basic_config_without_propagate(mock_manager: MagicMock):
     basic_config(propagate=False)
     mock_manager.reload_from_config.assert_not_called()
 
@@ -42,14 +42,14 @@ def test_get_group(mock_manager: MagicMock, random_string):
     assert return_value == mock_manager.get_group.return_value
 
 
-def test_resolve_group_id_returns_group_id_if_provided(foo_callable, random_string):
+def test_resolve_group_id_with_group_id(foo_callable, random_string):
     group_id = random_string
     function = Function.from_callable(foo_callable)
 
     assert group_id == resolve_group_id(group_id, function)
 
 
-def test_resolve_group_id_returns_function_id_if_group_id_not_provided(foo_callable):
+def test_resolve_group_id_without_group_id(foo_callable):
     group_id = None
     function = Function.from_callable(foo_callable)
 
