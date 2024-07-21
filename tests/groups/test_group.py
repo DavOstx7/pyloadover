@@ -6,6 +6,21 @@ from pyloadover.functions.function import Function
 from pyloadover.exceptions import NoMatchFoundError, MultipleMatchesFoundError
 
 
+def test_validators_attribute_assigned_to_param(mock_group_context, mock_group_validators):
+    group = Group(mock_group_context, mock_group_validators)
+
+    assert group.validators == mock_group_validators
+
+
+@patch.dict('pyloadover.groups.group.CONFIG', {}, clear=True)
+def test_validators_attribute_assigned_from_config(mock_group_context, mock_group_validators):
+    CONFIG["group_function_validators"] = mock_group_validators
+
+    group = Group(mock_group_context)
+
+    assert group.validators == CONFIG["group_function_validators"]
+
+
 @patch.dict('pyloadover.groups.group.CONFIG', {}, clear=True)
 def test_reload_from_config(mock_group_context, mock_group_validators, mock_functions):
     CONFIG["group_function_validators"] = mock_group_validators
