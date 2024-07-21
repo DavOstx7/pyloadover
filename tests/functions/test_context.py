@@ -4,7 +4,7 @@ from pyloadover.functions.context import FunctionContext
 
 
 @patch('pyloadover.functions.context.get_underlying_callable', autospec=True)
-def test_underlying_callable_attribute_assignment(mock_get_underlying_callable: MagicMock, mock_callable):
+def test_underlying_callable_attribute(mock_get_underlying_callable: MagicMock, mock_callable):
     context = FunctionContext(mock_callable)
 
     mock_get_underlying_callable.assert_called_once_with(mock_callable)
@@ -13,9 +13,9 @@ def test_underlying_callable_attribute_assignment(mock_get_underlying_callable: 
 
 @patch('inspect.signature', autospec=True)
 @patch('pyloadover.functions.context.get_underlying_callable', autospec=True)
-def test_signature_attribute_assignment_uses_underlying_callable(mock_get_underlying_callable: MagicMock,
-                                                                 mock_signature: MagicMock,
-                                                                 mock_callable, mock_underlying_callable):
+def test_signature_attribute_assigned_to_underlying_callable_signature(mock_get_underlying_callable: MagicMock,
+                                                                       mock_signature: MagicMock,
+                                                                       mock_callable, mock_underlying_callable):
     mock_get_underlying_callable.return_value = mock_underlying_callable
 
     context = FunctionContext(mock_callable)
@@ -26,9 +26,9 @@ def test_signature_attribute_assignment_uses_underlying_callable(mock_get_underl
 
 @patch('inspect.signature', autospec=True)
 @patch('pyloadover.functions.context.get_underlying_callable', autospec=True)
-def test_signature_attribute_assignment_uses_callable(mock_get_underlying_callable: MagicMock,
-                                                      mock_signature: MagicMock,
-                                                      mock_callable):
+def test_signature_attribute_assigned_to_callable_signature(mock_get_underlying_callable: MagicMock,
+                                                            mock_signature: MagicMock,
+                                                            mock_callable):
     mock_get_underlying_callable.return_value = None
 
     context = FunctionContext(mock_callable)
