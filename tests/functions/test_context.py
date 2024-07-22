@@ -20,6 +20,7 @@ def test_signature_attribute_assigned_to_underlying_callable_signature(mock_get_
 
     context = FunctionContext(mock_callable)
 
+    mock_get_underlying_callable.assert_called_once_with(mock_callable)
     mock_signature.assert_called_once_with(mock_underlying_callable)
     assert context._signature == mock_signature.return_value
 
@@ -33,5 +34,6 @@ def test_signature_attribute_assigned_to_callable_signature(mock_get_underlying_
 
     context = FunctionContext(mock_callable)
 
+    mock_get_underlying_callable.assert_called_once_with(mock_callable)
     mock_signature.assert_called_once_with(mock_callable)
     assert context._signature == mock_signature.return_value
