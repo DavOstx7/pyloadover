@@ -1,6 +1,7 @@
 import pytest
 from unittest.mock import patch
 
+from typing import List, Dict, Optional, Any
 from pyloadover.functions.function import Function, FunctionContext, CONFIG
 
 
@@ -42,9 +43,15 @@ def _dummy_foo(a: int, b: str, c: bool = True):
     pass
 
 
+def _dummy_typed_foo(a: List[int], b: Dict[str, Any], c: Optional[bool]):
+    pass
+
+
 @pytest.mark.parametrize("f, args,  kwargs", [
     (_dummy_foo, (1, "2"), {"c": True}),
-    (_dummy_foo, (1, "2"), {})
+    (_dummy_foo, (1, "2"), {}),
+    (_dummy_typed_foo, ([], {}, True), {}),
+    (_dummy_typed_foo, ([1, 2], {"1": 1, "2": 2, "3": bool}), {"c": None})
 ])
 def test_do_arguments_match_signature(f, args, kwargs):
     context = FunctionContext(f)
@@ -58,6 +65,10 @@ def test_do_arguments_match_signature(f, args, kwargs):
     (_dummy_foo, (1, 2), {"c": True}),
     (_dummy_foo, (1, "2"), {"c": 3}),
     (_dummy_foo, (1, "2"), {"c": True, "d": False}),
+    (_dummy_typed_foo, (["1", "2"], {}, False), {}),
+    (_dummy_typed_foo, ([], {1: 1}), {"c": True}),
+    (_dummy_typed_foo, (["1", "2"], {}, False), {}),
+    (_dummy_typed_foo, ([], {}, 1), {})
 ])
 def test_do_arguments_not_match_signature(f, args, kwargs):
     context = FunctionContext(f)
