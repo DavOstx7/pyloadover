@@ -12,7 +12,7 @@ def test_equal_ids_validator(mock_group_context, mock_function, random_string):
     validator.validate_function(mock_group_context, mock_function)
 
 
-def test_equal_ids_validator_raises_ids_mismatch(mock_group_context, mock_function, random_string):
+def test_equal_ids_validator_raises_id_mismatch(mock_group_context, mock_function, random_string):
     validator = EqualIdsValidator()
     mock_group_context.id = random_string
     mock_function.id = f"!{random_string}!"
