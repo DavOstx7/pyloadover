@@ -12,7 +12,7 @@ def test_id_generator_attr(mock_function_context, mock_function_id_generator):
 
 
 @patch.dict('pyloadover.functions.function.CONFIG', {}, clear=True)
-def test_id_generator_attr_default_value(mock_function_context, mock_function_id_generator):
+def test_id_generator_attr_default_value_from_config(mock_function_context, mock_function_id_generator):
     CONFIG["function_id_generator"] = mock_function_id_generator
 
     function = Function(mock_function_context)
