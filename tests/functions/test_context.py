@@ -1,3 +1,4 @@
+import random
 from unittest.mock import patch, MagicMock
 
 from pyloadover.functions.context import FunctionContext
@@ -12,7 +13,7 @@ def test_underlying_callable_attr(mock_get_underlying_callable: MagicMock, mock_
 
 
 @patch('inspect.signature', autospec=True)
-def test_signature_attr(mock_signature: MagicMock, mock_callable, mock_underlying_callable):
+def test_signature_attr(mock_signature: MagicMock, mock_callable):
     context = FunctionContext(mock_callable)
 
     mock_signature.assert_called_once_with(mock_callable)
@@ -20,8 +21,8 @@ def test_signature_attr(mock_signature: MagicMock, mock_callable, mock_underlyin
 
 
 @patch('inspect.signature', autospec=True)
-def test_signature_attr_underlying_callable_exists(mock_signature: MagicMock, mock_callable, mock_underlying_callable):
-    mock_callable.__wrapped__ = mock_underlying_callable
+def test_signature_attr_uses_underlying_callable(mock_signature: MagicMock, mock_callable, mock_underlying_callable):
+    setattr(mock_callable, random.choice(['__wrapped__', '__func__']), mock_underlying_callable)
 
     context = FunctionContext(mock_callable)
 

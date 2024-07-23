@@ -86,8 +86,8 @@ def test_as_callable(mock_function_context, mock_callable, args, kwargs):
     assert return_value == mock_callable.return_value
 
 
-def test_as_callable_underlying_callable_exists(mock_function_context, mock_callable, mock_underlying_callable,
-                                                args, kwargs):
+def test_as_callable_calls_underlying_callable(mock_function_context, mock_callable, mock_underlying_callable,
+                                               args, kwargs):
     mock_function_context.callable = mock_callable
     mock_function_context.underlying_callable = mock_underlying_callable
 
