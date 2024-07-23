@@ -1,13 +1,13 @@
 from pyloadover.groups.context import GroupContext
 
 
-def test_functions_attribute_assigned_to_param(mock_functions, random_string):
+def test_functions_attr(mock_functions, random_string):
     context = GroupContext(random_string, mock_functions)
 
     assert context._functions == mock_functions
 
 
-def test_functions_attribute_assigned_to_empty_list(random_string):
+def test_functions_attr_default_value(random_string):
     context = GroupContext(random_string)
 
     assert context._functions == []

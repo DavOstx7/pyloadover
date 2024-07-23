@@ -6,14 +6,14 @@ from pyloadover.functions.function import Function
 from pyloadover.exceptions import NoMatchFoundError, MultipleMatchesFoundError
 
 
-def test_validators_attribute_assigned_to_param(mock_group_context, mock_group_validators):
+def test_validators_attr(mock_group_context, mock_group_validators):
     group = Group(mock_group_context, mock_group_validators)
 
     assert group.validators == mock_group_validators
 
 
 @patch.dict('pyloadover.groups.group.CONFIG', {}, clear=True)
-def test_validators_attribute_assigned_from_config(mock_group_context, mock_group_validators):
+def test_validators_attr_default_value(mock_group_context, mock_group_validators):
     CONFIG["group_function_validators"] = mock_group_validators
 
     group = Group(mock_group_context)
@@ -169,13 +169,30 @@ def test_call_function_by_arguments(mock_find_single_function_by_arguments: Magi
     return_value = group.call_function_by_arguments(*args, **kwargs)
 
     mock_find_single_function_by_arguments.assert_called_once_with(*args, **kwargs)
-    mock_find_single_function_by_arguments.return_value.assert_called_once_with(*args, **kwargs)
-    assert return_value == mock_find_single_function_by_arguments.return_value.return_value
+    mock_found_function = mock_find_single_function_by_arguments.return_value
+    mock_found_function.assert_called_once_with(*args, **kwargs)
+    assert return_value == mock_found_function.return_value
+
+
+@patch.object(Group, 'call_function_by_arguments')
+@patch.object(Group, 'register_function')
+def test_wraps(mock_register_function: MagicMock, mock_call_function_by_arguments: MagicMock,
+               mock_group_context, mock_function, args, kwargs):
+    group = Group(mock_group_context)
+
+    wrapped_function = group.wraps(mock_function)
+
+    mock_register_function.assert_called_once_with(mock_function)
+
+    return_value = wrapped_function(*args, **kwargs)
+
+    mock_call_function_by_arguments.assert_called_once_with(*args, **kwargs)
+    assert return_value == mock_call_function_by_arguments.return_value
 
 
 @patch('pyloadover.groups.group.Function', autospec=True)
 @patch.object(Group, 'wraps')
-def test_group_call_wraps_callable(mock_wraps: MagicMock, MockFunction: MagicMock, mock_group_context):
+def test_as_decorator(mock_wraps: MagicMock, MockFunction: MagicMock, mock_group_context):
     group = Group(mock_group_context)
 
     def _foo():
