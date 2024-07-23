@@ -175,7 +175,7 @@ def test_call_function_by_arguments(mock_find_single_function_by_arguments: Magi
 
 @patch('pyloadover.groups.group.Function', autospec=True)
 @patch.object(Group, 'wraps')
-def test_as_callable(mock_wraps: MagicMock, MockFunction: MagicMock, mock_group_context):
+def test_as_decorator(mock_wraps: MagicMock, MockFunction: MagicMock, mock_group_context):
     group = Group(mock_group_context)
 
     def _foo():
