@@ -44,7 +44,7 @@ def test_get_group(mock_manager: MagicMock, random_string):
     assert return_value == mock_manager.get_group.return_value
 
 
-def test_resolve_group_id_with_group_id(foo_callable, random_string):
+def test_resolve_group_id(foo_callable, random_string):
     function = Function.from_callable(foo_callable)
 
     assert random_string == resolve_group_id(random_string, function)
