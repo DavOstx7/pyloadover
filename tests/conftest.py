@@ -58,9 +58,6 @@ def mock_callable(mock_underlying_callable, random_string) -> MagicMock:
     mock.__qualname__ = random_string[:2]
     mock.__module__ = random_string[:3]
 
-    if random.choice([True, False]):
-        mock.__wrapped__ = mock_underlying_callable
-
     return mock
 
 
