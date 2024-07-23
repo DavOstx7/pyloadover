@@ -66,8 +66,9 @@ def test_pyoverload(mock_manager: MagicMock, MockFunction: MagicMock, mock_resol
     MockFunction.from_callable.assert_called_once_with(foo_callable)
     mock_resolve_group_id.assert_called_once_with(random_string, MockFunction.from_callable.return_value)
     mock_manager.get_group.assert_called_once_with(mock_resolve_group_id.return_value)
-    mock_manager.get_group.return_value.wraps.assert_called_once_with(MockFunction.from_callable.return_value)
-    assert return_value == mock_manager.get_group.return_value.wraps.return_value
+    mock_gotten_group = mock_manager.get_group.return_value
+    mock_gotten_group.wraps.assert_called_once_with(MockFunction.from_callable.return_value)
+    assert return_value == mock_gotten_group.wraps.return_value
 
 
 def test_group_decorator_on_function(clear_manager, random_string):

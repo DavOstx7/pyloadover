@@ -169,8 +169,9 @@ def test_call_function_by_arguments(mock_find_single_function_by_arguments: Magi
     return_value = group.call_function_by_arguments(*args, **kwargs)
 
     mock_find_single_function_by_arguments.assert_called_once_with(*args, **kwargs)
-    mock_find_single_function_by_arguments.return_value.assert_called_once_with(*args, **kwargs)
-    assert return_value == mock_find_single_function_by_arguments.return_value.return_value
+    mock_found_function = mock_find_single_function_by_arguments.return_value
+    mock_found_function.assert_called_once_with(*args, **kwargs)
+    assert return_value == mock_found_function.return_value
 
 
 @patch.object(Group, 'call_function_by_arguments')
