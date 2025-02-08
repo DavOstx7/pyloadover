@@ -1,17 +1,18 @@
 from unittest.mock import patch, call, MagicMock
 
-from pyloadover.pyloadover import basic_config, get_group, resolve_group_id, overloader, overload
+import pyloadover
+from pyloadover.pyloadover import configure, get_or_create_group, resolve_group_id, overloader, overload
 from pyloadover.pyloadover import Function
 
 
 @patch('pyloadover.pyloadover.update_config_if_value_exists')
-def test_basic_config(
+def test_configure(
         mock_update_config_if_value_exists: MagicMock,
         mock_function_id_generator, mock_group_validators
 ):
     expected_call_count = 2
 
-    basic_config(
+    configure(
         function_id_generator=mock_function_id_generator,
         group_function_validators=mock_group_validators
     )
@@ -26,25 +27,25 @@ def test_basic_config(
 
 
 @patch('pyloadover.pyloadover.manager', spec_set=True)
-def test_basic_config_with_propagate(mock_manager: MagicMock):
-    basic_config(propagate=True)
+def test_configure_with_propagate(mock_manager: MagicMock):
+    configure(propagate=True)
 
     mock_manager.reload_from_config.assert_called_once_with()
 
 
 @patch('pyloadover.pyloadover.manager', spec_set=True)
-def test_basic_config_without_propagate(mock_manager: MagicMock):
-    basic_config(propagate=False)
+def test_configure_without_propagate(mock_manager: MagicMock):
+    configure(propagate=False)
 
     mock_manager.reload_from_config.assert_not_called()
 
 
 @patch('pyloadover.pyloadover.manager', spec_set=True)
-def test_get_group(mock_manager: MagicMock, random_string):
-    return_value = get_group(random_string)
+def test_get_or_create_group(mock_manager: MagicMock, random_string):
+    return_value = get_or_create_group(random_string)
 
-    mock_manager.get_group.assert_called_once_with(random_string)
-    assert return_value == mock_manager.get_group.return_value
+    mock_manager.get_or_create_group.assert_called_once_with(random_string)
+    assert return_value == mock_manager.get_or_create_group.return_value
 
 
 def test_resolve_group_id(foo_callable, random_string):
@@ -70,14 +71,14 @@ def test_overloader(
 
     MockFunction.from_callable.assert_called_once_with(foo_callable)
     mock_resolve_group_id.assert_called_once_with(random_string, MockFunction.from_callable.return_value)
-    mock_manager.get_group.assert_called_once_with(mock_resolve_group_id.return_value)
-    mock_gotten_group = mock_manager.get_group.return_value
+    mock_manager.get_or_create_group.assert_called_once_with(mock_resolve_group_id.return_value)
+    mock_gotten_group = mock_manager.get_or_create_group.return_value
     mock_gotten_group.wraps.assert_called_once_with(MockFunction.from_callable.return_value)
     assert return_value == mock_gotten_group.wraps.return_value
 
 
 def test_group_decorator_on_function(clear_manager, random_string):
-    random_group = get_group(random_string)
+    random_group = get_or_create_group(random_string)
 
     @random_group
     def foo(x: int):
@@ -171,3 +172,17 @@ def test_overload_decorator_on_class_method(clear_manager):
     assert Foo.foo(1) == 1
     assert Foo.foo(1, "2") == (1, "2")
     assert Foo.bar(3) == 3
+
+
+def test_dynamic_overload_builder_usage(clear_manager):
+    dynamic_group_loader = pyloadover.my.custom.group
+
+    assert dynamic_group_loader.name == "my.custom.group"
+
+
+def test_dynamic_overload_builder_usage_as_decorator(clear_manager):
+    @pyloadover.my.custom.group
+    def foo(x: int):
+        return x
+
+    assert "my.custom.group" in clear_manager.id_to_group

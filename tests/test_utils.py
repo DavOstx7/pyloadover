@@ -1,11 +1,11 @@
 import pytest
 
 import functools
-from typing import List, Dict
+from typing import List, Dict, Callable, Any
 from pyloadover.utils import is_instance, get_underlying_callable
 
 
-@pytest.mark.parametrize("value, annotation", [
+@pytest.mark.parametrize("obj, annotation", [
     (1, int),
     ("2", str),
     ([1, 2, 3], list),
@@ -13,11 +13,11 @@ from pyloadover.utils import is_instance, get_underlying_callable
     ({1: 1, 2: 2}, dict),
     ({"1": "2", "2": "2"}, Dict[str, str])
 ])
-def test_is_instance(value, annotation):
-    assert is_instance(value, annotation)
+def test_is_instance(obj: object, annotation: Any):
+    assert is_instance(obj, annotation)
 
 
-@pytest.mark.parametrize("value, annotation", [
+@pytest.mark.parametrize("obj, annotation", [
     (1, bool),
     ("2", bool),
     ([1, 2, 3], dict),
@@ -25,12 +25,12 @@ def test_is_instance(value, annotation):
     ({1: 1, 2: 2}, list),
     ({"1": "2", "2": "2"}, List[str])
 ])
-def test_is_not_instance(value, annotation):
-    assert not is_instance(value, annotation)
+def test_is_not_instance(obj: object, annotation: Any):
+    assert not is_instance(obj, annotation)
 
 
-def _dummy_decorator(func):
-    @functools.wraps(func)
+def _dummy_decorator(f: Callable[[...], Any]):
+    @functools.wraps(f)
     def _dummy_wrapper(*args, **kwargs):
         pass
 
