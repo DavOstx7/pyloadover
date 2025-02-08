@@ -1,163 +1,234 @@
 # pyloadover
 
-pyloadover is a python package which allows you to overload your functions in different ways.
-It supports a lot of additional features, which you are more than welcome to discover yourself :)
+**Function Overloading Made Easy in Python**
+
+`pyloadover` is a Python package that enables **function overloading** in Python. It allows you to define multiple
+implementations of a function with different signatures and automatically selects the appropriate one based on the
+arguments provided. Additionally, it offers advanced features like **custom ID generation**, **validation**, and **group
+management** for overloaded functions.
+
+---
 
 ## Installation
 
-```shell
+Install pyloadover using pip:
+
+```bash
 pip install pyloadover
 ```
 
-## Basic Usage
+__NOTE__: `pyloadover` requires Python3.8 or higher.
+
+---
+
+## Quick Start
+
+### Basic Overloading
+
+Function overloading allows you to define multiple implementations of a function with different signatures.
+`pyloadover` automatically selects the appropriate implementation based on the arguments provided.
+
+Here’s how you can use `pyloadover` to overload functions:
 
 ```python
 from pyloadover import overload
 
 
 @overload
-def function():
-    return None
+def greet():
+    return "Hello, World!"
 
 
 @overload
-def function(x: int):
-    return x ** 2
+def greet(name: str):
+    return f"Hello, {name}!"
 
 
-print("[1] Calling function():")
-print(function())
+@overload
+def greet(first_name: str, last_name: str):
+    return f"Hello, {first_name} {last_name}!"
 
-print("[2] Calling function(5):")
-print(function(5))
 
-print("[3] Calling function(5, 25, 125):")
-print(function(5, 25, 125))
+# Calling the overloaded functions
+print(greet())  # Output: Hello, World!
+print(greet("Alice"))  # Output: Hello, Alice!
+print(greet("Alice", "Smith"))  # Output: Hello, Alice Smith!
 ```
 
-```bash
-[1] Calling function():
-None
-[2] Calling function(5):
-25
-[3] Calling function(5, 25, 125):
-pyloadover.exceptions.NoMatchFoundError: Provided arguments [(5, 25, 125), {}] do not match any signature in group '__main__.function'
-```
-
-## Basic Config
+If no matching function is found, a `NoMatchingSignatureError` is raised:
 
 ```python
-from pyloadover import overload, basic_config, FullyQualifiedNameIdGenerator, UniqueSignaturesValidator
+print(greet(1, 2, 3))  # Raises: NoMatchingSignatureError
+```
+
+--- 
+
+## Configuration
+
+You can configure `pyloadover` using the `configure` function. For example,
+you can enforce unique function signatures and customize how function IDs are generated:
+
+- `propagate`: Applies the configuration to all existing and future groups.
+- `function_id_generator`: Determines how function IDs are generated (e.g., using fully qualified names).
+  When no group is explicitly specified,
+  these IDs are used to automatically assign functions to their respective groups.
+- `group_function_validators`: Ensures functions meet specific criteria when added to a group (e.g., unique signatures).
+
+```python
+from pyloadover import overload, configure, QualifiedNameIdGenerator, SignatureUniquenessValidator
 
 
 @overload
-def function():
-    return None
+def greet():
+    return "Hello, World!"
 
 
-basic_config(
-    propagate=True,
-    function_id_generator=FullyQualifiedNameIdGenerator(),
-    group_function_validators=[UniqueSignaturesValidator()]
+# Configure pyloadover
+configure(
+    propagate=True,  # Propagate configuration to all groups
+    function_id_generator=QualifiedNameIdGenerator(),  # Use fully qualified names as IDs
+    group_function_validators=[SignatureUniquenessValidator()]  # Enforce unique signatures
 )
 
 
+# Attempting to register a duplicate signature will raise an error
 @overload
-def function():
-    return None
+def greet():
+    return "Hello again!"
 ```
 
 ```bash
-pyloadover.exceptions.SignatureExistsError: Function '__main__.function' signature () already exists in group '__main__.function'
+SignatureExistsError: Function 'main.greet' with signature () already exists in group 'main.greet'
 ```
 
-__NOTE__: By default, the package is configured as follows:
+--- 
 
-```bash
-basic_config(
-    function_id_generator=FullyQualifiedNameIdGenerator(),
-    group_function_validators=[EqualIdsValidator(), UniqueSignaturesValidator()]
-)
+## Function Groups
+
+pyloadover allows you to organize overloaded functions into groups. A group is a collection of functions that share the
+same name but have different signatures.
+
+### Creating and Using Groups
+
+You can create and manage groups in three ways:
+
+#### Method 1: Using `get_or_create_group`
+
+```python
+from pyloadover import get_or_create_group
+
+greet_group = get_or_create_group("greet")
+
+
+@greet_group
+def greet(name: str):
+    return f"Hello, {name}!"
 ```
 
-## Groups
+#### Method 2: Using `overloader`
+
+```python
+from pyloadover import overloader
+
+
+@overloader("greet")
+def greet(first_name: str, last_name: str):
+    return f"Hello, {first_name} {last_name}!"
+```
+
+#### Method 3: Using the Dynamic Overload Builder
 
 ```python
 import pyloadover
-from pyloadover import get_group, pyoverload
-
-function_group = get_group("__main__.function")
 
 
-@function_group  # Method 1
-def function(name: str):
-    return f"Hello {name}!"
-
-
-@pyoverload("__main__.function")  # Method 2
-def function(first_name: str, last_name: str):
-    return f"Hello {first_name}, your last name is {last_name}!"
-
-
-@pyloadover.__main__.function  # Method 3
-def function(first_name: str, middle_name: str, last_name: str):
-    return f"Hello {first_name}, your middle name is {middle_name}, and your last name is {last_name}!"
-
-
-print('[1] Calling function with params ("Foo"):')
-print(function_group.call_function_by_arguments("Foo"))  # Method 1
-
-print('[2] Calling function with params: ("Foo", "Bar"):')
-print(function("Foo", "Bar"))  # Method 2
-
-print('[3] Calling function with params: ("Foo", "IDK", "Bar"):')
-print(function_group.find_single_function_by_arguments("Foo", "IDK", "Bar")("Foo", "IDK", "Bar"))  # Method 3
+@pyloadover.greet
+def greet(first_name: str, middle_name: str, last_name: str):
+    return f"Hello, {first_name} {middle_name} {last_name}!"
 ```
 
-```bash
-[1] Calling function with params ("Foo"):
-Hello Foo!
-[2] Calling function with params ("Foo", "Bar"):
-Hello Foo, your last name is Bar!
-[3] Calling function with params ("Foo", "IDK", "Bar"):
-Hello Foo, your middle name is IDK, and your last name is Bar!
-```
+### Calling Functions in a Group
 
-## Function ID Generators & Group Function Validators
-
-These objects are used to fine-tune the package, and make it more solid/customizable.
-
-### Function ID Generators
-
-The function id generators, as their name indicates, are used to generate an id. This id, will be used to identify them,
-and also belong them to a group with a matching id, unless specified otherwise.
-
-* `FullyQualifiedNameIdGenerator`: Generates an ID which is composed out of the function's module and the function's
-  qualified name.
-* `NameIdGenerator`: Generates an ID which is composed out of the function's name.
-
-### Group Function Validators
-
-The group function validators, as their name indicates, are used to validate functions. These validators will be
-activated upon a function registration, or a manual .validate() group call.
-
-* `EqualIdsValidator`: Validates that the ID of the registered function matches the ID of the group it is registered to.
-* `UniqueSignaturesValidator`: Validates that the signature of the registered function does not already exist in the
-  group it is registered to.
-
-__NOTE__: You could also create your own custom generators / validators!
+You can call functions in a group using their arguments:
 
 ```python
-from pyloadover.functions import Function, FunctionContext, FunctionIdGenerator
-from pyloadover.groups import GroupContext, GroupFunctionValidator
+print(greet("Alice"))  # Output: Hello, Alice!
+print(greet("Alice", "Smith"))  # Output: Hello, Alice Smith!
+print(greet("Alice", "Marie", "Smith"))  # Output: Hello, Alice Marie Smith!
+```
+
+You can also call functions by using their group:
+
+```python
+greet_group.find_single_function_by_arguments("Alice")("Alice")  # Output: Hello, Alice!
+greet_group.call_function_by_arguments("Alice", "Smith")  # Output: Hello, Alice Smith!
+```
+
+---
+
+## Advanced Features
+
+### Custom ID Generators
+
+ID generators determine how functions are identified and grouped.
+`pyloadover` provides two built-in generators:
+
+* `QualifiedNameIdGenerator`: Uses the function’s module and qualified name as the ID.
+* `NameIdGenerator`: Uses the function’s name as the ID.
+
+You can also create custom ID generators:
+
+```python
+from pyloadover import FunctionIdGenerator, FunctionContext
 
 
 class CustomIdGenerator(FunctionIdGenerator):
     def generate_id(self, context: FunctionContext) -> str:
-        pass
-
-
-class CustomFunctionValidator(GroupFunctionValidator):
-    def validate_function(self, group_context: GroupContext, function: Function):
-        pass
+        return f"custom_{context.function.name}"
 ```
+
+### Custom Validators
+
+Validators ensure that functions meet specific criteria when added to a group.
+`pyloadover` provides two built-in validators:
+
+* `EqualIdsValidator`: Ensures the function’s ID matches the group’s ID.
+* `SignatureUniquenessValidator`: Ensures no two functions in a group have the same signature.
+
+You can create custom validators:
+
+```python
+from pyloadover import GroupFunctionValidator, GroupContext, Function
+
+
+class CustomValidator(GroupFunctionValidator):
+    def validate_function(self, group_context: GroupContext, function: Function):
+        if "admin" in function.context.name:
+            raise ValueError("Admin functions are not allowed!")
+```
+
+---
+
+## Default Configuration
+
+By default, pyloadover is configured as follows:
+
+```python
+configure(
+    function_id_generator=QualifiedNameIdGenerator(),
+    group_function_validators=[EqualIdsValidator(), SignatureUniquenessValidator()]
+)
+```
+
+---
+
+## Contributing
+
+If you’d like to contribute to `pyloadover`, feel free to open an issue or
+submit a pull request on [GitHub](https://github.com/DavOstx7/pyloadover).
+
+---
+
+## License
+
+pyloadover is licensed under the MIT License. See [LICENSE](LICENSE) for more details.
