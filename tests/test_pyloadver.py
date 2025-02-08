@@ -1,11 +1,14 @@
 from unittest.mock import patch, call, MagicMock
 
-from pyloadover.pyloadover import basic_config, get_group, resolve_group_id, pyoverload, overload
+from pyloadover.pyloadover import basic_config, get_group, resolve_group_id, overloader, overload
 from pyloadover.pyloadover import Function
 
 
-@patch('pyloadover.pyloadover.set_if_value_exists')
-def test_basic_config(mock_set_if_value_exists: MagicMock, mock_function_id_generator, mock_group_validators):
+@patch('pyloadover.pyloadover.update_config_if_value_exists')
+def test_basic_config(
+        mock_update_config_if_value_exists: MagicMock,
+        mock_function_id_generator, mock_group_validators
+):
     expected_call_count = 2
 
     basic_config(
@@ -13,8 +16,8 @@ def test_basic_config(mock_set_if_value_exists: MagicMock, mock_function_id_gene
         group_function_validators=mock_group_validators
     )
 
-    assert mock_set_if_value_exists.call_count == expected_call_count
-    mock_set_if_value_exists.assert_has_calls(
+    assert mock_update_config_if_value_exists.call_count == expected_call_count
+    mock_update_config_if_value_exists.assert_has_calls(
         [
             call("function_id_generator", mock_function_id_generator),
             call("group_function_validators", mock_group_validators)
@@ -59,9 +62,11 @@ def test_resolve_group_id_without_group_id(foo_callable):
 @patch('pyloadover.pyloadover.resolve_group_id', spec_set=True)
 @patch('pyloadover.pyloadover.Function', spec_set=True)
 @patch('pyloadover.pyloadover.manager', spec_set=True)
-def test_pyoverload(mock_manager: MagicMock, MockFunction: MagicMock, mock_resolve_group_id: MagicMock,
-                    random_string, foo_callable, args, kwargs):
-    return_value = pyoverload(random_string)(foo_callable)
+def test_overloader(
+        mock_manager: MagicMock, MockFunction: MagicMock, mock_resolve_group_id: MagicMock,
+        random_string, foo_callable, args, kwargs
+):
+    return_value = overloader(random_string)(foo_callable)
 
     MockFunction.from_callable.assert_called_once_with(foo_callable)
     mock_resolve_group_id.assert_called_once_with(random_string, MockFunction.from_callable.return_value)

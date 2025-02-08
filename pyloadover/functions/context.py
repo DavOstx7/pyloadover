@@ -6,10 +6,11 @@ from pyloadover.utils import get_underlying_callable
 class FunctionContext:
     def __init__(self, f: Callable[[...], Any]):
         underlying_callable = get_underlying_callable(f)
+        signature = inspect.signature(underlying_callable) if underlying_callable else inspect.signature(f)
 
         self._callable = f
         self._underlying_callable = underlying_callable
-        self._signature = inspect.signature(underlying_callable) if underlying_callable else inspect.signature(f)
+        self._signature = signature
 
     @property
     def callable(self) -> Callable[[...], Any]:
