@@ -75,7 +75,7 @@ you can enforce unique function signatures and customize how function IDs are ge
 - `group_function_validators`: Ensures functions meet specific criteria when added to a group (e.g., unique signatures).
 
 ```python
-from pyloadover import overload, configure, QualifiedNameIdGenerator, SignatureUniquenessValidator
+from pyloadover import overload, configure, FullyQualifiedNameIdGenerator, UniqueSignaturesValidator
 
 
 @overload
@@ -86,8 +86,8 @@ def greet():
 # Configure pyloadover
 configure(
     propagate=True,  # Propagate configuration to all groups
-    function_id_generator=QualifiedNameIdGenerator(),  # Use fully qualified names as IDs
-    group_function_validators=[SignatureUniquenessValidator()]  # Enforce unique signatures
+    function_id_generator=FullyQualifiedNameIdGenerator(),  # Use fully qualified names as IDs
+    group_function_validators=[UniqueSignaturesValidator()]  # Enforce unique signatures
 )
 
 
@@ -174,7 +174,7 @@ greet_group.find_single_function_by_arguments("Alice")("Alice")  # Output: Hello
 ID generators determine how functions are identified and grouped.
 `pyloadover` provides two built-in generators:
 
-* `QualifiedNameIdGenerator`: Uses the function’s module and qualified name as the ID.
+* `FullyQualifiedNameIdGenerator`: Uses the function’s module and qualified name as the ID.
 * `NameIdGenerator`: Uses the function’s name as the ID.
 
 You can also create custom ID generators:
@@ -194,7 +194,7 @@ Validators ensure that functions meet specific criteria when added to a group.
 `pyloadover` provides two built-in validators:
 
 * `EqualIdsValidator`: Ensures the function’s ID matches the group’s ID.
-* `SignatureUniquenessValidator`: Ensures no two functions in a group have the same signature.
+* `UniqueSignaturesValidator`: Ensures no two functions in a group have the same signature.
 
 You can create custom validators:
 
@@ -216,8 +216,8 @@ By default, `pyloadover` is configured as follows:
 
 ```python
 configure(
-    function_id_generator=QualifiedNameIdGenerator(),
-    group_function_validators=[EqualIdsValidator(), SignatureUniquenessValidator()]
+    function_id_generator=FullyQualifiedNameIdGenerator(),
+    group_function_validators=[EqualIdsValidator(), UniqueSignaturesValidator()]
 )
 ```
 
