@@ -2,7 +2,7 @@
 
 **Function Overloading Made Easy in Python**
 
-`pyloadover` is a Python package that enables **function overloading** in Python. It allows you to define multiple
+pyloadover is a Python package that enables **function overloading** in Python. It allows you to define multiple
 implementations of a function with different signatures and automatically selects the appropriate one based on the
 arguments provided. Additionally, it offers advanced features like **custom ID generation**, **validation**, and **group
 management** for overloaded functions.
@@ -17,7 +17,7 @@ Install pyloadover using pip:
 pip install pyloadover
 ```
 
-__NOTE__: `pyloadover` requires Python3.8 or higher.
+__NOTE__: pyloadover requires Python3.8 or higher.
 
 ---
 
@@ -105,7 +105,8 @@ SignatureExistsError: Function 'main.greet' with signature () already exists in 
 
 ## Function Groups
 
-pyloadover allows you to organize overloaded functions into groups. A group is a collection of functions that share the
+`pyloadover` allows you to organize overloaded functions into groups. A group is a collection of functions that share
+the
 same name but have different signatures.
 
 ### Creating and Using Groups
@@ -136,7 +137,7 @@ def greet(first_name: str, last_name: str):
     return f"Hello, {first_name} {last_name}!"
 ```
 
-#### Method 3: Using the Dynamic Overload Builder
+#### Method 3: Using the Dynamic Overload Builder Syntax
 
 ```python
 import pyloadover
@@ -160,8 +161,8 @@ print(greet("Alice", "Marie", "Smith"))  # Output: Hello, Alice Marie Smith!
 You can also call functions by using their group:
 
 ```python
+greet_group.call_function_by_arguments("Alice")  # Output: Hello, Alice!
 greet_group.find_single_function_by_arguments("Alice")("Alice")  # Output: Hello, Alice!
-greet_group.call_function_by_arguments("Alice", "Smith")  # Output: Hello, Alice Smith!
 ```
 
 ---
@@ -211,7 +212,7 @@ class CustomValidator(GroupFunctionValidator):
 
 ## Default Configuration
 
-By default, pyloadover is configured as follows:
+By default, `pyloadover` is configured as follows:
 
 ```python
 configure(
@@ -224,7 +225,7 @@ configure(
 
 ## Contributing
 
-If you’d like to contribute to `pyloadover`, feel free to open an issue or
+If you’d like to contribute to pyloadover, feel free to open an issue or
 submit a pull request on [GitHub](https://github.com/DavOstx7/pyloadover).
 
 ---
