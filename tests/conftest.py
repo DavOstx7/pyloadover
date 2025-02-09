@@ -5,11 +5,12 @@ import random
 import inspect
 import string
 from typing import List, Callable, Dict
-from pyloadover.pyloadover import manager, basic_config
+from pyloadover.pyloadover import manager, configure
 from pyloadover.functions import Function, FunctionContext, FunctionIdGenerator, NameIdGenerator
 from pyloadover.groups import Group, GroupContext, GroupFunctionValidator
+from pyloadover.manager import Manager
 
-basic_config(function_id_generator=NameIdGenerator(), group_function_validators=[])
+configure(function_id_generator=NameIdGenerator(), group_function_validators=[])
 
 
 @pytest.fixture
@@ -112,5 +113,6 @@ def mock_id_to_group(args) -> Dict[str, MagicMock]:
 
 
 @pytest.fixture
-def clear_manager():
+def clear_manager() -> Manager:
     manager.clear()
+    return manager

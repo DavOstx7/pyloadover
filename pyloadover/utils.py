@@ -3,9 +3,9 @@ import typeguard
 from typing import Optional, Callable, Any
 
 
-def is_instance(value, annotation) -> bool:
+def is_instance(obj: object, annotation: Any) -> bool:
     try:
-        typeguard.check_type(value, annotation)
+        typeguard.check_type(obj, annotation)
     except typeguard.TypeCheckError:
         return False
     else:

@@ -5,14 +5,14 @@ from typing import List, Dict, Optional, Any
 from pyloadover.functions.function import Function, FunctionContext, CONFIG
 
 
-def test_id_generator_attr(mock_function_context, mock_function_id_generator):
+def test_id_generator_attribute(mock_function_context, mock_function_id_generator):
     function = Function(mock_function_context, mock_function_id_generator)
 
     assert function.id_generator == mock_function_id_generator
 
 
 @patch.dict('pyloadover.functions.function.CONFIG', {}, clear=True)
-def test_id_generator_attr_default_value(mock_function_context, mock_function_id_generator):
+def test_id_generator_attribute_default_value(mock_function_context, mock_function_id_generator):
     CONFIG["function_id_generator"] = mock_function_id_generator
 
     function = Function(mock_function_context)
@@ -86,8 +86,10 @@ def test_as_callable(mock_function_context, mock_callable, args, kwargs):
     assert return_value == mock_callable.return_value
 
 
-def test_as_callable_calls_underlying_callable(mock_function_context, mock_callable, mock_underlying_callable,
-                                               args, kwargs):
+def test_as_callable_calls_underlying_callable(
+        mock_function_context, mock_callable, mock_underlying_callable,
+        args, kwargs
+):
     mock_function_context.callable = mock_callable
     mock_function_context.underlying_callable = mock_underlying_callable
 

@@ -9,7 +9,7 @@ class Manager(ConfigReloadable):
 
     @property
     def id_to_group(self) -> Dict[str, Group]:
-        # Shallow copying means the values themselves (objects) are modifiable
+        # shallow copy
         return self._id_to_group.copy()
 
     def reload_from_config(self):
@@ -22,7 +22,7 @@ class Manager(ConfigReloadable):
     def is_group_exists(self, group_id: str) -> bool:
         return group_id in self._id_to_group
 
-    def get_group(self, group_id: str) -> Group:
+    def get_or_create_group(self, group_id: str) -> Group:
         if group_id not in self._id_to_group:
             self._id_to_group[group_id] = Group.from_id(group_id)
 

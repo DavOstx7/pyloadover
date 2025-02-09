@@ -39,7 +39,6 @@ class Group(ConfigReloadable):
 
     def register_function(self, function: Function):
         self.validate_function(function)
-
         self.functions.append(function)
 
     def validate(self):
@@ -75,7 +74,7 @@ class Group(ConfigReloadable):
         self.register_function(function)
 
         @functools.wraps(function.callable)
-        def wrapper(*args, **kwargs):
+        def wrapper(*args, **kwargs) -> Any:
             return self.call_function_by_arguments(*args, **kwargs)
 
         return wrapper

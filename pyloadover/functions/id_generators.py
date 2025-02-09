@@ -9,10 +9,10 @@ class FunctionIdGenerator(ABC):
 
 
 class FullyQualifiedNameIdGenerator(FunctionIdGenerator):
-    def generate_id(self, context: FunctionContext):
+    def generate_id(self, context: FunctionContext) -> str:
         return f"{context.module}.{context.qualified_name}"
 
 
 class NameIdGenerator(FunctionIdGenerator):
-    def generate_id(self, context: FunctionContext):
+    def generate_id(self, context: FunctionContext) -> str:
         return context.name
