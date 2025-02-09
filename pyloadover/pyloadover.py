@@ -26,7 +26,7 @@ def resolve_group_id(group_id: Optional[str], function: Function) -> str:
     return function.id if group_id is None else group_id
 
 
-# TO DO: better type hinting for decorators/wrappers
+# TODO: better type hinting for decorators/wrappers
 def overloader(group_id: Optional[str] = None) -> Callable[[...], Any]:
     def decorator(f: Callable[[...], Any]) -> Callable[[...], Any]:
         function = Function.from_callable(f)

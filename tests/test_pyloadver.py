@@ -175,9 +175,9 @@ def test_overload_decorator_on_class_method(clear_manager):
 
 
 def test_dynamic_overload_builder_usage(clear_manager):
-    dynamic_group_loader = pyloadover.my.custom.group
+    dynamic_overload_builder = pyloadover.my.custom.group
 
-    assert dynamic_group_loader.name == "my.custom.group"
+    assert dynamic_overload_builder.name == "my.custom.group"
 
 
 def test_dynamic_overload_builder_usage_as_decorator(clear_manager):

@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Optional, Any
 
-# TO DO: better config management (via a class for the config or consts/enums for the keys)
+# TODO: better config management (via a class for the config or consts/enums for the keys)
 CONFIG = {
     "function_id_generator": None,
     "group_function_validators": None
