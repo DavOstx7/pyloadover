@@ -55,10 +55,10 @@ print(greet("Alice"))  # Output: Hello, Alice!
 print(greet("Alice", "Smith"))  # Output: Hello, Alice Smith!
 ```
 
-If no matching function is found, a `NoMatchingSignatureError` is raised:
+If no matching function is found, a `NoMatchFoundError` is raised:
 
 ```python
-print(greet(1, 2, 3))  # Raises: NoMatchingSignatureError
+print(greet(1, 2, 3))  # Raises: NoMatchFoundError
 ```
 
 --- 
